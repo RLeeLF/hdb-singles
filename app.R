@@ -111,7 +111,7 @@ ui <- fluidPage(
       
       sliderInput(
         inputId = "monthly_budget",
-        label   = "Maximum Comfortable Monthly Housing Budget ($/month):",
+        label   = "Maximum Comfortable Monthly Housing Budget Cash & CPF ($/month):",
         min     = 1000,
         max     = 10000,
         value   = 3500,

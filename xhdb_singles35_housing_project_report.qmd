@@ -2,35 +2,29 @@
 title: "HDB Options for Singles 35+: A Net-Worth Decision Engine"
 subtitle: "CDAR 2026 · Capstone Project Report"
 author: "Team—Ivy · Lai Forng · Lee Yen"
-date: last-modified
-date-format: "D MMMM YYYY"
-format:
-  html:
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
     toc: true
-    toc-depth: 3
-    code-fold: show
-    code-tools: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    code_folding: show
     theme: cosmo
-    embed-resources: true
-    number-sections: true
-    fig-align: center
-    fig-width: 9
-    fig-height: 4.5
-execute:
-  warning: false
-  message: false
-  echo: true
-editor: source
+    number_sections: true
+    fig_align: center
+    fig_width: 9
+    fig_height: 4.5
 ---
 
 ```{r}
 #| label: setup
 #| include: false
-# Keep this lean—load only what the report actually uses.
+# Load only what the report actually uses.
 library(tidyverse)   # dplyr / ggplot2 / readr / tidyr
 library(tidymodels)  # rsample / recipes / parsnip / workflows / yardstick / tune
 library(vip)         # variable importance for the M3 model
-# library(sf)        # uncomment once you do the amenity -> town spatial join
 # library(timetk)    # uncomment for M4 time_series_split
 # library(modeltime) # uncomment for M4 model race
 tidymodels_prefer()
@@ -40,28 +34,26 @@ set.seed(2026)
 
 # Executive summary {#sec-exec}
 
-**Decision (placeholder—replace with your computed result):** For a self-funded single aged 35+ earning *\$5,500/month*, the path that maximises projected *5-year net worth* is **[BTO / resale / rent]**, at roughly **\$[net-worth]** versus **\$[runner-up]** for the next-best path, under the central interest-rate scenario (**\~3.5%**) and central town-group price growth.
+For a self-funded single aged 35 with $100,000 avaliable CPF/cash, the path that maximises projected projected 5-year net worth is 3-Room resale at Punggol, at roughly $192,736 versus $179,914 for the next-best path,which is Punggol BTO, under the central interest-rate scenario (**\~3.5%**) and central town-group price growth.
 
-This report takes ONE HDB price dataset through Modules 1–4 and ends in a recommendation. The engine underneath is a **deterministic net-worth simulator**: given salary, age, retirement horizon and a rate scenario, it applies Singapore's financing rules (TDSR 55%, MSR 30%, LTV 75%, CPF for downpayment, lease decay) to compare BTO, resale and rent. Modules 2–4 supply the inputs the simulator needs: which **town group** you can afford (M2), a **price/psf model** to value a specific flat (M3), and a **directional 5-year growth range** per town group (M4).
+This report takes 3 HDB price datasets, geo-spatial data based on 2019 Planning map, combine into 2 master tables through Modules 1–4 and ends in a recommendation. The engine underneath is a deterministic net-worth simulator: taking the user's inputs,preferred towns, flat sizes, monthly housing budget, interest rate and monthly rental. It applies Singapore's financing rules (TDSR 55%, MSR 30%, LTV 75%, CPF for downpayment, lease decay) to compare BTO, resale and rental. Modules 2–4 supply the inputs the simulator needs: how much monthly a user can afford, a price/psf model to value a specific flat type in a town, and a directional 5-year growth range per town group (M4).
 
 **Two questions this answers**
 
-- **Q-A (descriptive):** how do BTO, resale and rent compare *today* on upfront cash, monthly burden under the loan limits, and the town groups each opens up?
-- **Q-B (prescriptive):** which path maximises projected **5-year net worth** under transparent rate scenarios and town-group growth ranges—and how sensitive is that to the assumptions?
+- **Q-A (descriptive):** how do BTO, resale and rent compare today on upfront cash, monthly burden under the loan limits, and the town groups?
+- **Q-B (prescriptive):** which path maximises projected 5-year net worth under transparent rate scenarios and town-group growth ranges—and how sensitive is that to the assumptions?
 
-**What we deliberately do NOT do:** we do not forecast 5-year interest rates (not credibly possible); we treat rates as **2–3 scenarios**. We do not run a causal Module 5—the question is a calculation, not an intervention (see @sec-m5).
+**What we deliberately do NOT do:** we do not forecast 5-year interest rates (not credibly possible); we treat rates as 2–3 scenarios. We do not run a causal Module 5—the question is a calculation, not an intervention (see @sec-m5).The simulator does not take into account anyone more than age 35 years. The UX of the simulator expects the user to combine the CPF, cash component in the entry field. It does not allow for the selection of "old" flats vs "new" flats in the same town for simplicity. The calculations are meant to be for reference only. 
 
 ```{r}
 #| label: assumptions
 #| eval: true
-# Light, self-contained: the financing rules as one editable list.
-# These are ILLUSTRATIVE defaults—TODO: confirm current MAS/HDB figures.
 rules <- list(
   income_month   = 5500,     # stakeholder monthly income
   tdsr           = 0.55,     # total debt servicing ratio ceiling
   msr            = 0.30,     # mortgage servicing ratio ceiling (HDB)
   ltv            = 0.75,     # loan-to-value ceiling
-  loan_years     = 25,       # tenure cap depends on age; TODO refine by age
+  loan_years     = 30,       # tenure cap depends on age which we fix at 35
   horizon_years  = 5         # net-worth evaluation window
 )
 # Rate SCENARIOS replace any attempt to forecast rates.
@@ -72,29 +64,49 @@ rate_scenarios <- tibble(
 rate_scenarios
 ```
 
+
 # M1 · See it {#sec-m1}
 
-**Goal:** build ONE clean panel—`town × flat_type × month` resale prices—and show the opening exhibit. This is the load-bearing module; everything downstream joins onto this panel.
+**Goal:** build ONE clean panel—`town × flat_type × month` resale prices with different flat types. This is the load-bearing module; everything downstream joins onto this panel.
 
 ```{r}
 #| label: m1-import
-#| eval: false
+#| eval: true
 # flip to eval: true once the data.gov.sg CSVs are downloaded into ./data
 # TODO: download from data.gov.sg and record URL + date in data/README.md
-resale_raw <- read_csv("data/resale_flat_prices.csv")
+resale_raw <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv")
+```
+```{r}
+#| label: m1-helper
+#| eval: true
+# Small, self-contained helper used above—safe to render without data.
+# Helper: Parses "61 years 04 months" (or "61 years") into numeric years.
+parse_remaining_lease <- function(x) {
+  yrs <- str_extract(x, "\\d+(?=\\s*year)")  %>% as.numeric()
+  mos <- str_extract(x, "\\d+(?=\\s*month)") %>% as.numeric()
+  coalesce(yrs, 0) + coalesce(mos, 0) / 12
+}
+```
+
+
+```{r}
+sqm_to_sqf = 10.7639 # we are used to psf value. convert everything to psf.
 
 resale <- resale_raw %>%
   mutate(
-    month     = ym(month),                         # "2020-01" -> Date
+    date_parsed     = ym(month),  # "2020-01" -> Date
+    year        = year(date_parsed),
+    month_num   = month(date_parsed),
     town      = str_to_title(town),
-    flat_type = str_to_upper(flat_type),
-    # remaining_lease often "61 years 04 months" -> numeric years
-    remaining_lease_yrs = parse_remaining_lease(remaining_lease),
-    price_psf = resale_price / floor_area_sqm      # keep a per-sqm measure
+    floor_area_sqf = sqm_to_sqf * floor_area_sqm,
+    flat_type = str_replace(str_to_upper(flat_type), " ROOM", "_ROOM"), #need to scrub the field across 3 tables
+    flat_age = year(Sys.Date()) - lease_commence_date, # using HDB definition since there is lease buy-back
+    remaining_lease_yrs = 99 - flat_age, # this method can avoid the parsing issue and is more accurate realistically
+    price_psf = resale_price / floor_area_sqf     
   ) %>%
-  filter(flat_type %in% c("2 ROOM", "3 ROOM", "4 ROOM", "5 ROOM")) %>%
-  select(month, town, flat_type, floor_area_sqm,
-         remaining_lease_yrs, resale_price, price_psf)
+  filter(flat_type %in% c("2_ROOM", "3_ROOM", "4_ROOM", "5_ROOM")) %>%
+  select(year, town, flat_type, floor_area_sqf,
+         remaining_lease_yrs, resale_price, price_psf)#there was a conversion to psf for all flat types
 
 glimpse(resale)
 ```
@@ -103,22 +115,22 @@ glimpse(resale)
 #| label: m1-helper
 #| eval: true
 # Small, self-contained helper used above—safe to render without data.
-# Parses "61 years 04 months" (or "61 years") into numeric years.
+# Helper: Parses "61 years 04 months" (or "61 years") into numeric years.
 parse_remaining_lease <- function(x) {
   yrs <- str_extract(x, "\\d+(?=\\s*year)")  %>% as.numeric()
   mos <- str_extract(x, "\\d+(?=\\s*month)") %>% as.numeric()
   coalesce(yrs, 0) + coalesce(mos, 0) / 12
 }
-parse_remaining_lease(c("61 years 04 months", "80 years"))
 ```
 
 ```{r}
 #| label: m1-panel
-#| eval: false
+#| eval: true
 # flip to eval: true once resale is loaded
 # The panel the rest of the report joins onto.
 town_panel <- resale %>%
-  group_by(town, flat_type, month) %>%
+  mutate(year = year(month)) %>%  # Extract numeric year for plotting
+  group_by(town, flat_type, year, month) %>%
   summarise(
     med_price = median(resale_price),
     med_psf   = median(price_psf),
@@ -129,12 +141,59 @@ town_panel <- resale %>%
 # One opening exhibit: median price/psf over time, 4-ROOM, faceted sample of towns.
 town_panel %>%
   filter(flat_type == "4 ROOM",
-         town %in% c("Ang Mo Kio", "Punggol", "Bukit Merah",
-                     "Woodlands", "Queenstown", "Sengkang")) %>%
+         town %in% c("Ang Mo Kio", "Punggol","Clementi","Bukit Batok",
+                     "Woodlands", "Queenstown", "Sengkang","Tampines","Bedok","Toa Payoh")) %>%
   ggplot(aes(month, med_psf, colour = town)) +
   geom_line(linewidth = 0.8) +
-  labs(title = "4-ROOM resale price per sqm over time",
-       x = NULL, y = "Median price per sqm (S$)", colour = "Town")
+  labs(title = "4-ROOM resale price per sqf over time",
+       x = NULL, y = "Median price per sqf (S$)", colour = "Town")
+```
+
+```{r}
+#| label: m1-price-trends-all-rooms
+#| eval: true
+#| fig-cap: "Resale price per sqf trends across flat sizes and towns"
+#| fig-height: 8
+#| fig-width: 10
+
+target_towns <- c("Ang Mo Kio", "Punggol", "Clementi", "Bukit Batok",
+                  "Woodlands", "Queenstown", "Sengkang", "Tampines", 
+                  "Bedok", "Toa Payoh")
+
+# Custom town color palette
+town_colors <- c(
+  "Ang Mo Kio"  = "#FF69B4",  # Pink the north towns
+  "Woodlands"   = "#D32F2F",  # Red
+  "Clementi"   = "#0D47A1",  # Dark Blue
+  "Queenstown"  = "#4FC3F7",  # Light Blue
+  "Sengkang"   = "#E65100",  # Dark Orange
+  "Punggol"    = "#FBC02D",  # Gold / Yellow 
+  "Tampines"   = "#1B5E20",  # Dark Green
+  "Bedok"      = "#81C784",  # Light Green
+  "Toa Payoh" = "#78909C",  # Slate Gray 
+  "Bukit Batok"  = "#8D6E63",  # Brown 
+  "Hougang"      = "#AB47BC"   # Purple (fallback)
+)
+
+# Use town_panel and filter for space-separated "2 ROOM", "3 ROOM", etc.
+town_panel %>%
+  filter(
+    flat_type %in% c("2 ROOM", "3 ROOM", "4 ROOM", "5 ROOM"),
+    town %in% target_towns
+  ) %>%
+  ggplot(aes(x = month, y = med_psf, colour = town)) +
+  geom_line(linewidth = 0.8) +
+  facet_wrap(~ flat_type, scales = "free_y") +
+  scale_y_continuous(labels = scales::dollar) +
+  scale_color_manual(values = town_colors) +
+  labs(
+    title = "HDB Resale Price per Sqf Over Time by Flat Size",
+    subtitle = "Comparing price trends across key mature and non-mature towns",
+    x = NULL,
+    y = "Median Price per Sqf (S$)",
+    colour = "Town"
+  ) +
+  theme(legend.position = "bottom")
 ```
 
 # M2 · Group it {#sec-m2}
@@ -178,9 +237,10 @@ town_groups <- town_features %>%
   mutate(cluster = factor(km$cluster)) %>%
   # TODO: inspect centroids, then rename to interpretable labels
   mutate(town_group = recode(cluster,
-    `1` = "High-Yield",
-    `2` = "Affordable-Growth",
-    `3` = "Stable-Stagnant"
+    `1` = "High-Density Affordable Growth",
+    `2` = "Moderate-Density Transit Hub Moderate Growth",
+    `3` = "Low-Density Premium Lower Growth",
+    TRUE ~ "Other"
   ))
 
 town_groups %>% count(town_group)
@@ -281,7 +341,7 @@ group_ts <- town_panel %>%
   summarise(med_psf = median(med_psf), .groups = "drop")
 
 # Model ONE group end-to-end; loop or nest over groups for the rest.
-one_group <- group_ts %>% filter(town_group == "Affordable-Growth")
+one_group <- group_ts %>% filter(town_group == "Moderate-Density Transit Hub Moderate Growth")
 
 set.seed(2026)
 splits <- time_series_split(one_group, date_var = month,
