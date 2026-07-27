@@ -20,9 +20,9 @@ library(timetk)
 library(modeltime)
 
 # 1. Update Working Directory
-setwd("~/Desktop/cdar2026/capstone/HDB-for-singles")
+setwd("~/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator")
 ### save RData ----
-save.image("CDAR_capstone_hdb_capstone_v2.RData")
+save.image("HDB_capstone_v2.RData")
 
 resale_raw <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv", show_col_types = FALSE)
 bto_raw    <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/PriceRangeofHDBFlatsOffered.csv", show_col_types = FALSE)
