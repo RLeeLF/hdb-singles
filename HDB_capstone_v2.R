@@ -19,17 +19,13 @@ library(tidymodels)
 library(timetk) 
 library(modeltime)
 
-# 1. Update Working Directory
-setwd("~/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator")
 ### save RData ----
 save.image("HDB_capstone_v2.RData")
 
-resale_raw <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv", show_col_types = FALSE)
-bto_raw    <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/PriceRangeofHDBFlatsOffered.csv", show_col_types = FALSE)
-rental_raw <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/RentingOutofFlatsfromJan2021.csv", show_col_types = FALSE)
-town_feature_master <- read_csv("/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/data/spatial/feature_master_table_v3.csv", show_col_types = FALSE)
-#saveRDS(empirical_start_matrix, "/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/empirical_start_matrix.rds")
-#saveRDS(growth_matrix_dynamic, "/Users/ivypoon/Desktop/cdar2026/capstone/HDB-for-singles/hdb_calculator/growth_matrix_dynamic.rds")
+resale_raw <- read_csv("data/ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv", show_col_types = FALSE)
+bto_raw    <- read_csv("data/PriceRangeofHDBFlatsOffered.csv", show_col_types = FALSE)
+rental_raw <- read_csv("data/RentingOutofFlatsfromJan2021.csv", show_col_types = FALSE)
+town_feature_master <- read_csv("data/spatial/feature_master_table_v3.csv", show_col_types = FALSE)
 
 glimpse(resale_raw)
 
