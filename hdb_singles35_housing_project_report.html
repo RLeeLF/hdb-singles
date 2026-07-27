@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Team—Ivy · Lai Forng · Lee Yen">
-<meta name="dcterms.date" content="2026-07-26">
+<meta name="dcterms.date" content="2026-07-28">
 
 <title>HDB Options for Singles 35+: A Net-Worth Decision Engine</title>
 <style>
@@ -73,15 +73,64 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="hdb_singles35_housing_project_report_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="hdb_singles35_housing_project_report_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="hdb_singles35_housing_project_report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="hdb_singles35_housing_project_report_files/libs/bootstrap/bootstrap-138a6193a3bd40baf1e627da441a4734.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="hdb_singles35_housing_project_report_files/libs/bootstrap/bootstrap-8ffd5f67044e5306d9846f29df41dda5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<style>html{ scroll-behavior: smooth; }</style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-exec" id="toc-sec-exec" class="nav-link active" data-scroll-target="#sec-exec"><span class="header-section-number">1</span> Executive Summary</a></li>
+  <li><a href="#sec-m1" id="toc-sec-m1" class="nav-link" data-scroll-target="#sec-m1"><span class="header-section-number">2</span> M1 · See It</a>
+  <ul class="collapse">
+  <li><a href="#panel-summaries-visualization" id="toc-panel-summaries-visualization" class="nav-link" data-scroll-target="#panel-summaries-visualization"><span class="header-section-number">2.1</span> Panel Summaries &amp; Visualization</a></li>
+  </ul></li>
+  <li><a href="#sec-m2" id="toc-sec-m2" class="nav-link" data-scroll-target="#sec-m2"><span class="header-section-number">3</span> M2 · Group It</a></li>
+  <li><a href="#sec-m3" id="toc-sec-m3" class="nav-link" data-scroll-target="#sec-m3"><span class="header-section-number">4</span> M3 · Predict It</a></li>
+  <li><a href="#sec-m4" id="toc-sec-m4" class="nav-link" data-scroll-target="#sec-m4"><span class="header-section-number">5</span> M4 · Forecast It</a></li>
+  <li><a href="#sec-sim" id="toc-sec-sim" class="nav-link" data-scroll-target="#sec-sim"><span class="header-section-number">6</span> The Net-Worth Simulator Engine</a></li>
+  <li><a href="#sec-reco" id="toc-sec-reco" class="nav-link" data-scroll-target="#sec-reco"><span class="header-section-number">7</span> Recommendation</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -104,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 26, 2026</p>
+      <p class="date">July 28, 2026</p>
     </div>
   </div>
   
@@ -116,505 +165,617 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="sec-exec" class="level1">
-<h1>Executive summary</h1>
-<p>For a self-funded single aged 35 with $100,000 avaliable CPF/cash, the path that maximises projected projected 5-year net worth is 3-Room resale at Punggol, at roughly $192,736 versus $179,914 for the next-best path,which is Punggol BTO, under the central interest-rate scenario (<strong>~3.5%</strong>) and central town-group price growth.</p>
-<p>This report takes 3 HDB price datasets, geo-spatial data based on 2019 Planning map, combine into 2 master tables through Modules 1–4 and ends in a recommendation. The engine underneath is a deterministic net-worth simulator: taking the user’s inputs,preferred towns, flat sizes, monthly housing budget, interest rate and monthly rental. It applies Singapore’s financing rules (TDSR 55%, MSR 30%, LTV 75%, CPF for downpayment, lease decay) to compare BTO, resale and rental. Modules 2–4 supply the inputs the simulator needs: how much monthly a user can afford, a price/psf model to value a specific flat type in a town, and a directional 5-year growth range per town group (M4).</p>
-<p><strong>Two questions this answers</strong></p>
-<ul>
-<li><strong>Q-A (descriptive):</strong> how do BTO, resale and rent compare today on upfront cash, monthly burden under the loan limits, and the town groups?</li>
-<li><strong>Q-B (prescriptive):</strong> which path maximises projected 5-year net worth under transparent rate scenarios and town-group growth ranges—and how sensitive is that to the assumptions?</li>
-</ul>
-<p><strong>What we deliberately do NOT do:</strong> we do not forecast 5-year interest rates (not credibly possible); we treat rates as 2–3 scenarios. We do not run a causal Module 5—the question is a calculation, not an intervention (see <a href="#sec-m5" class="quarto-xref">Section&nbsp;6</a>).The simulator does not take into account anyone more than age 35 years. The UX of the simulator expects the user to combine the CPF, cash component in the entry field. It does not allow for the selection of “old” flats vs “new” flats in the same town for simplicity. The calculations are meant to be for reference only.</p>
+<section id="sec-exec" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Executive Summary</h1>
+<p>For a self-funded single citizen aged 35 with <strong>$100,000</strong> available CPF/cash, the path that maximises projected 5-year net worth is a <strong>3-Room resale flat in Punggol</strong> (~<strong>$192,736</strong>) versus <strong>$179,914</strong> for the next-best alternative (Punggol BTO) under central interest rates (<strong>~3.5%</strong>) and central price growth. This report combines three HDB transaction datasets and 2019 Master Plan geo-spatial accessibility data into a multi-stage analytical framework (Modules 1–4) culminating in an interactive decision engine.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Light, self-contained: the financing rules as one editable list.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># These are ILLUSTRATIVE defaults—TODO: confirm current MAS/HDB figures.</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>rules <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">income_month   =</span> <span class="dv">5500</span>,     <span class="co"># stakeholder monthly income</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tdsr           =</span> <span class="fl">0.55</span>,     <span class="co"># total debt servicing ratio ceiling</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">msr            =</span> <span class="fl">0.30</span>,     <span class="co"># mortgage servicing ratio ceiling (HDB)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ltv            =</span> <span class="fl">0.75</span>,     <span class="co"># loan-to-value ceiling</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">loan_years     =</span> <span class="dv">30</span>,       <span class="co"># tenure cap depends on age which we fix at 35</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">horizon_years  =</span> <span class="dv">5</span>         <span class="co"># net-worth evaluation window</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Rate SCENARIOS replace any attempt to forecast rates.</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>rate_scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">c</span>(<span class="st">"HDB concessionary"</span>, <span class="st">"Bank low"</span>, <span class="st">"Bank high"</span>),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">annual_rate =</span> <span class="fu">c</span>(<span class="fl">0.026</span>, <span class="fl">0.035</span>, <span class="fl">0.045</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>rate_scenarios</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Global housing rules &amp; interest rate scenarios</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>rules <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">horizon_years =</span> <span class="dv">5</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ltv =</span> <span class="fl">0.75</span>,        <span class="co"># Maximum 75% Loan-to-Value limit</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">loan_years =</span> <span class="dv">25</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>rate_scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">scenario =</span> <span class="fu">c</span>(<span class="st">"low_rate"</span>, <span class="st">"central_rate"</span>, <span class="st">"high_rate"</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">annual_rate =</span> <span class="fu">c</span>(<span class="fl">0.026</span>, <span class="fl">0.035</span>, <span class="fl">0.045</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>rate_scenarios</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
-  scenario          annual_rate
-  &lt;chr&gt;                   &lt;dbl&gt;
-1 HDB concessionary       0.026
-2 Bank low                0.035
-3 Bank high               0.045</code></pre>
+  scenario     annual_rate
+  &lt;chr&gt;              &lt;dbl&gt;
+1 low_rate           0.026
+2 central_rate       0.035
+3 high_rate          0.045</code></pre>
 </div>
 </div>
 </section>
-<section id="sec-m1" class="level1">
-<h1>M1 · See it</h1>
-<p><strong>Goal:</strong> build ONE clean panel—<code>town × flat_type × month</code> resale prices with different flat types. This is the load-bearing module; everything downstream joins onto this panel.</p>
+<section id="sec-m1" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> M1 · See It</h1>
+<p><strong>Goal:</strong> Build clean panels (<code>town × flat_type × year</code>) across Resale, Rental, and BTO datasets converted into standardized $PSF measures.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once the data.gov.sg CSVs are downloaded into ./data</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: download from data.gov.sg and record URL + date in data/README.md</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>resale_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/resale_flat_prices.csv"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>resale <span class="ot">&lt;-</span> resale_raw <span class="sc">%&gt;%</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">month     =</span> <span class="fu">ym</span>(month),                         <span class="co"># "2020-01" -&gt; Date</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">town      =</span> <span class="fu">str_to_title</span>(town),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type =</span> <span class="fu">str_to_upper</span>(flat_type),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># remaining_lease often "61 years 04 months" -&gt; numeric years</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">remaining_lease_yrs =</span> <span class="fu">parse_remaining_lease</span>(remaining_lease),</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">price_psf =</span> resale_price <span class="sc">/</span> floor_area_sqm      <span class="co"># keep a per-sqm measure</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2 ROOM"</span>, <span class="st">"3 ROOM"</span>, <span class="st">"4 ROOM"</span>, <span class="st">"5 ROOM"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(month, town, flat_type, floor_area_sqm,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>         remaining_lease_yrs, resale_price, price_psf) <span class="co">#there was a conversion to psf for all flat types</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(resale)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sqm_to_sqf <span class="ot">&lt;-</span> <span class="fl">10.7639</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Import raw datasets using dynamic relative paths</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>resale_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>bto_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"PriceRangeofHDBFlatsOffered.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>rental_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"RentingOutofFlatsfromJan2021.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>town_feature_master <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"spatial"</span>, <span class="st">"feature_master_table_v3.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Small, self-contained helper used above—safe to render without data.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Parses "61 years 04 months" (or "61 years") into numeric years.</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>parse_remaining_lease <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  yrs <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(x, <span class="st">"</span><span class="sc">\\</span><span class="st">d+(?=</span><span class="sc">\\</span><span class="st">s*year)"</span>)  <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  mos <span class="ot">&lt;-</span> <span class="fu">str_extract</span>(x, <span class="st">"</span><span class="sc">\\</span><span class="st">d+(?=</span><span class="sc">\\</span><span class="st">s*month)"</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coalesce</span>(yrs, <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">coalesce</span>(mos, <span class="dv">0</span>) <span class="sc">/</span> <span class="dv">12</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">parse_remaining_lease</span>(<span class="fu">c</span>(<span class="st">"61 years 04 months"</span>, <span class="st">"80 years"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean Resale dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>resale <span class="ot">&lt;-</span> resale_raw <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_parsed =</span> <span class="fu">ym</span>(month),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date_parsed),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_num =</span> <span class="fu">month</span>(date_parsed),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">town =</span> <span class="fu">str_to_title</span>(town),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> sqm_to_sqf <span class="sc">*</span> floor_area_sqm,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(flat_type), <span class="st">" ROOM"</span>, <span class="st">"_ROOM"</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_age =</span> <span class="fu">year</span>(<span class="fu">Sys.Date</span>()) <span class="sc">-</span> lease_commence_date,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">remaining_lease_yrs =</span> <span class="dv">99</span> <span class="sc">-</span> flat_age,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">price_psf =</span> resale_price <span class="sc">/</span> floor_area_sqf</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, town, flat_type, floor_area_sqf, remaining_lease_yrs, resale_price, price_psf)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(resale)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 61.33333 80.00000</code></pre>
+<pre><code>Rows: 217,348
+Columns: 7
+$ year                &lt;dbl&gt; 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 20…
+$ town                &lt;chr&gt; "Ang Mo Kio", "Ang Mo Kio", "Ang Mo Kio", "Ang Mo …
+$ flat_type           &lt;chr&gt; "2_ROOM", "3_ROOM", "3_ROOM", "3_ROOM", "3_ROOM", …
+$ floor_area_sqf      &lt;dbl&gt; 473.6116, 721.1813, 721.1813, 731.9452, 721.1813, …
+$ remaining_lease_yrs &lt;dbl&gt; 52, 51, 53, 53, 53, 54, 52, 49, 52, 52, 53, 50, 50…
+$ resale_price        &lt;dbl&gt; 232000, 250000, 262000, 265000, 265000, 275000, 28…
+$ price_psf           &lt;dbl&gt; 489.8529, 346.6535, 363.2928, 362.0490, 367.4527, …</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once resale is loaded</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The panel the rest of the report joins onto.</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>town_panel <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type, month) <span class="sc">%&gt;%</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_price =</span> <span class="fu">median</span>(resale_price),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_psf   =</span> <span class="fu">median</span>(price_psf),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n         =</span> <span class="fu">n</span>(),</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups   =</span> <span class="st">"drop"</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># One opening exhibit: median price/psf over time, 4-ROOM, faceted sample of towns.</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>town_panel <span class="sc">%&gt;%</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">==</span> <span class="st">"4 ROOM"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>         town <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Ang Mo Kio"</span>, <span class="st">"Punggol"</span>, <span class="st">"Bukit Merah"</span>,<span class="st">"Clementi"</span>,<span class="st">"Bukit Batok"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Woodlands"</span>, <span class="st">"Queenstown"</span>, <span class="st">"Sengkang"</span>,<span class="st">"Tampines"</span>,<span class="st">"Bedok"</span>,<span class="st">"Toa Payoh"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(month, med_psf, <span class="at">colour =</span> town)) <span class="sc">+</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"4-ROOM resale price per sqf over time"</span>,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Median price per sqf (S$)"</span>, <span class="at">colour =</span> <span class="st">"Town"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean Rental dataset</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rental <span class="ot">&lt;-</span> rental_raw <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_parsed =</span> <span class="fu">ym</span>(rent_approval_date),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date_parsed),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_num =</span> <span class="fu">month</span>(date_parsed),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">town =</span> <span class="fu">str_to_title</span>(town),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(flat_type), <span class="st">"-ROOM"</span>, <span class="st">"_ROOM"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, town, flat_type, monthly_rent)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(rental)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 189,665
+Columns: 4
+$ year         &lt;dbl&gt; 2021, 2021, 2021, 2021, 2021, 2021, 2021, 2021, 2021, 202…
+$ town         &lt;chr&gt; "Ang Mo Kio", "Ang Mo Kio", "Ang Mo Kio", "Ang Mo Kio", "…
+$ flat_type    &lt;chr&gt; "4_ROOM", "3_ROOM", "3_ROOM", "5_ROOM", "5_ROOM", "3_ROOM…
+$ monthly_rent &lt;dbl&gt; 2000, 1750, 1750, 2230, 2450, 1950, 1400, 1600, 2000, 160…</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean BTO dataset</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>bto <span class="ot">&lt;-</span> bto_raw <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">as.integer</span>(financial_year),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">town =</span> <span class="fu">str_to_title</span>(town),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(room_type), <span class="st">"-ROOM"</span>, <span class="st">"_ROOM"</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_selling_price =</span> <span class="fu">as.numeric</span>(min_selling_price),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_selling_price =</span> <span class="fu">as.numeric</span>(max_selling_price),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_bto_flr_area_sqf =</span> <span class="dv">36</span> <span class="sc">*</span> sqm_to_sqf,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_bto_flr_area_sqf =</span> <span class="dv">45</span> <span class="sc">*</span> sqm_to_sqf,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_price_psf =</span> min_selling_price <span class="sc">/</span> min_bto_flr_area_sqf,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_price_psf =</span> max_selling_price <span class="sc">/</span> max_bto_flr_area_sqf</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, town, flat_type, min_price_psf, max_price_psf, min_selling_price, max_selling_price)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bto)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 82
+Columns: 7
+$ year              &lt;int&gt; 2008, 2008, 2008, 2009, 2009, 2009, 2009, 2009, 2010…
+$ town              &lt;chr&gt; "Punggol", "Bukit Panjang", "Sengkang", "Punggol", "…
+$ flat_type         &lt;chr&gt; "2_ROOM", "2_ROOM", "2_ROOM", "2_ROOM", "2_ROOM", "2…
+$ min_price_psf     &lt;dbl&gt; 211.6127, 211.6127, 188.3869, 229.6772, 221.9353, 21…
+$ max_price_psf     &lt;dbl&gt; 220.9030, 218.8385, 196.1288, 235.3546, 212.6449, 21…
+$ min_selling_price &lt;dbl&gt; 82000, 82000, 73000, 89000, 86000, 83000, 72000, 740…
+$ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 94000…</code></pre>
+</div>
+</div>
+<section id="panel-summaries-visualization" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="panel-summaries-visualization"><span class="header-section-number">2.1</span> Panel Summaries &amp; Visualization</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resale Town Panel</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>resale_town_panel <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type, year) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_price =</span> <span class="fu">median</span>(resale_price),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_psf =</span> <span class="fu">median</span>(price_psf),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Rental Town Panel</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>rental_town_panel <span class="ot">&lt;-</span> rental <span class="sc">%&gt;%</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type, year) <span class="sc">%&gt;%</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_price =</span> <span class="fu">median</span>(monthly_rent),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># BTO Town Panel</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>bto_town_panel <span class="ot">&lt;-</span> bto <span class="sc">%&gt;%</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type, year) <span class="sc">%&gt;%</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">med_price_psf =</span> <span class="fu">median</span>(max_price_psf),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>target_towns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Ang Mo Kio"</span>, <span class="st">"Punggol"</span>, <span class="st">"Clementi"</span>, <span class="st">"Bukit Batok"</span>, <span class="st">"Woodlands"</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Queenstown"</span>, <span class="st">"Sengkang"</span>, <span class="st">"Tampines"</span>, <span class="st">"Bedok"</span>, <span class="st">"Toa Payoh"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>town_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Ang Mo Kio"</span> <span class="ot">=</span> <span class="st">"#FF69B4"</span>,   <span class="co"># Pink</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Woodlands"</span> <span class="ot">=</span> <span class="st">"#D32F2F"</span>,    <span class="co"># Red</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Clementi"</span> <span class="ot">=</span> <span class="st">"#0D47A1"</span>,     <span class="co"># Dark Blue</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Queenstown"</span> <span class="ot">=</span> <span class="st">"#4FC3F7"</span>,   <span class="co"># Light Blue</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Sengkang"</span> <span class="ot">=</span> <span class="st">"#E65100"</span>,     <span class="co"># Dark Orange</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Punggol"</span> <span class="ot">=</span> <span class="st">"#FBC02D"</span>,      <span class="co"># Gold / Yellow</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tampines"</span> <span class="ot">=</span> <span class="st">"#1B5E20"</span>,     <span class="co"># Dark Green</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Bedok"</span> <span class="ot">=</span> <span class="st">"#81C784"</span>,        <span class="co"># Light Green</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Toa Payoh"</span> <span class="ot">=</span> <span class="st">"#78909C"</span>,    <span class="co"># Slate Gray</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Bukit Batok"</span> <span class="ot">=</span> <span class="st">"#8D6E63"</span>,  <span class="co"># Brown</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Hougang"</span> <span class="ot">=</span> <span class="st">"#AB47BC"</span>       <span class="co"># Purple</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>resale_town_panel <span class="sc">%&gt;%</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>),</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    town <span class="sc">%in%</span> target_towns</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> med_psf, <span class="at">colour =</span> town)) <span class="sc">+</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> flat_type, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> town_colors) <span class="sc">+</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"HDB Resale Price per Sqf Over Time by Flat Size"</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Comparing price trends across key mature and non-mature towns"</span>,</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Median Price per Sqf (S$)"</span>,</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Town"</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="hdb_singles35_housing_project_report_files/figure-html/m1-price-trends-all-rooms-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Resale price per sqf trends across flat sizes and towns</figcaption>
+</figure>
+</div>
+</div>
 </div>
 </section>
-<section id="sec-m2" class="level1">
-<h1>M2 · Group it</h1>
-<p><strong>Goal:</strong> cluster the ~26 towns into interpretable groups, name them, and join the label forward as an M3 feature. <strong>(Clustering is Module 2—this is the correction of the swapped M2/M3 label from the proposal.)</strong></p>
+</section>
+<section id="sec-m2" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> M2 · Group It</h1>
+<p><strong>Goal:</strong> Segment towns into 3 interpretable investor clusters using price levels, price growth, price volatility, and spatial GeoJSON features.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once town_panel exists</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># One row per town: price level, recent growth, and (optional) amenity signals.</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>town_features <span class="ot">&lt;-</span> town_panel <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">==</span> <span class="st">"4 ROOM"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town) <span class="sc">%&gt;%</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(month, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf   =</span> <span class="fu">median</span>(med_psf),</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y   =</span> <span class="fu">last</span>(med_psf) <span class="sc">/</span> <span class="fu">first</span>(med_psf) <span class="sc">-</span> <span class="dv">1</span>,  <span class="co"># crude level growth</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatility  =</span> <span class="fu">sd</span>(med_psf),</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> (stretch): left_join a few amenity counts/distances per town here</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   (MRT distance, hawker count, school count) from ONE sf::st_join.</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(town_features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_panel <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>,<span class="st">"3_ROOM"</span>,<span class="st">"4_ROOM"</span>,<span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf =</span> <span class="fu">median</span>(med_psf),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y =</span> <span class="fu">last</span>(med_psf) <span class="sc">/</span> <span class="fu">first</span>(med_psf) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatility =</span> <span class="fu">sd</span>(med_psf),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> flat_type,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(level_psf, growth_5y, volatility),</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_glue =</span> <span class="st">"{.value}_{flat_type}"</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_2_ROOM), <span class="fu">median</span>(level_psf_2_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_2_ROOM),</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_3_ROOM), <span class="fu">median</span>(level_psf_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_3_ROOM),</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_4_ROOM), <span class="fu">median</span>(level_psf_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_4_ROOM),</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_5_ROOM), <span class="fu">median</span>(level_psf_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_5_ROOM),</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_2_ROOM), <span class="dv">0</span>, growth_5y_2_ROOM),</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_3_ROOM), <span class="fu">median</span>(growth_5y_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_3_ROOM),</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_4_ROOM), <span class="fu">median</span>(growth_5y_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_4_ROOM),</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_5_ROOM), <span class="fu">median</span>(growth_5y_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_5_ROOM),</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">contains</span>(<span class="st">"volatility"</span>), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .))</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>cluster_rec <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_feature_master, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town"</span> <span class="ot">=</span> <span class="st">"PLN_AREA_N"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once town_features exists</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>clust_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> level_psf <span class="sc">+</span> growth_5y <span class="sc">+</span> volatility, <span class="at">data =</span> town_features) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>clust_prepped <span class="ot">&lt;-</span> <span class="fu">prep</span>(clust_rec) <span class="sc">%&gt;%</span> <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(clust_prepped, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>town_groups <span class="ot">&lt;-</span> town_features <span class="sc">%&gt;%</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(km<span class="sc">$</span>cluster)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># </span><span class="al">TODO</span><span class="co">: inspect centroids, then rename to interpretable labels</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town_group =</span> <span class="fu">recode</span>(cluster,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"High-Density Affordable Growth"</span>,</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Moderate-Density Transit Hub Moderate Growth"</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Low-Density Premium Lower Growth"</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Other"</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>town_groups <span class="sc">%&gt;%</span> <span class="fu">count</span>(town_group)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>clust_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> ., <span class="at">data =</span> cluster_rec) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(town, <span class="at">new_role =</span> <span class="st">"id"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>clust_prepped <span class="ot">&lt;-</span> <span class="fu">prep</span>(clust_rec) <span class="sc">%&gt;%</span> <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>clust_matrix <span class="ot">&lt;-</span> clust_prepped <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(clust_matrix, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>town_groups <span class="ot">&lt;-</span> cluster_rec <span class="sc">%&gt;%</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(km<span class="sc">$</span>cluster))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>town_groups <span class="sc">%&gt;%</span> <span class="fu">count</span>(cluster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  cluster     n
+  &lt;fct&gt;   &lt;int&gt;
+1 1           7
+2 2          13
+3 3           6</code></pre>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true—this label is the feature M3 will test.</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>resale_labelled <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_groups <span class="sc">%&gt;%</span> <span class="fu">select</span>(town, town_group), <span class="at">by =</span> <span class="st">"town"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="sec-m3" class="level1">
-<h1>M3 · Predict it</h1>
-<p><strong>Goal (supporting role):</strong> a held-out price/psf model, and the graded <strong>WITH vs WITHOUT the M2 town-group feature</strong> comparison. This values a specific flat inside the simulator—it is not the net-worth engine itself.</p>
+<section id="sec-m3" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> M3 · Predict It</h1>
+<p><strong>Goal:</strong> Fit a Random Forest regression model to predict $PSF valuations, testing the impact of adding Module 2 town clusters.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once resale_labelled exists</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>model_df <span class="ot">&lt;-</span> resale_labelled <span class="sc">%&gt;%</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(price_psf, remaining_lease_yrs, town_group) <span class="sc">%&gt;%</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(flat_type, town_group), as.factor))</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>split   <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(model_df, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> price_psf)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>train   <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>test    <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>resale_clean_upper <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>town_groups_upper <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>resale_labelled <span class="ot">&lt;-</span> resale_clean_upper <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_groups_upper <span class="sc">%&gt;%</span> <span class="fu">select</span>(town, cluster), <span class="at">by =</span> <span class="st">"town"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>model_df <span class="ot">&lt;-</span> resale_labelled <span class="sc">%&gt;%</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(price_psf, remaining_lease_yrs, cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(flat_type, cluster), as.factor))</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(model_df, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> price_psf)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>rec_without <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>rec_with <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf <span class="sc">+</span> cluster, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">300</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"permutation"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>wf_without <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_without) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>wf_with <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_with) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>fit_without <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_without, <span class="at">data =</span> train)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>fit_with <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_with, <span class="at">data =</span> train)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>metric_set_reg <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse, rsq, mae)</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_obj, label) {</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(fit_obj, <span class="at">new_data =</span> test) <span class="sc">%&gt;%</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">metric_set_reg</span>(<span class="at">truth =</span> price_psf, <span class="at">estimate =</span> .pred) <span class="sc">%&gt;%</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> label)</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">score</span>(fit_without, <span class="st">"without M2 group"</span>), <span class="fu">score</span>(fit_with, <span class="st">"with M2 group"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model, .metric, .estimate) <span class="sc">%&gt;%</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  model             rmse   rsq   mae
+  &lt;chr&gt;            &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 without M2 group 120.  0.425  92.5
+2 with M2 group     98.4 0.626  79.3</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true—two recipes: WITHOUT vs WITH the M2 cluster label.</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>rec_without <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqm,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>rec_with <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqm <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                     town_group, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">500</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"permutation"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>wf_without <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_without) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>wf_with    <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_with)    <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_with <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="hdb_singles35_housing_project_report_files/figure-html/m3-vip-1.png" class="img-fluid figure-img" width="864"></p>
+<figcaption>Top 10 Valuation Drivers</figcaption>
+</figure>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true—HELD-OUT scoring on test, the number that counts.</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fit_without <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_without, <span class="at">data =</span> train)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fit_with    <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_with,    <span class="at">data =</span> train)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>metric_set_reg <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse, rsq, mae)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_obj, label) {</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(fit_obj, <span class="at">new_data =</span> test) <span class="sc">%&gt;%</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">metric_set_reg</span>(<span class="at">truth =</span> price_psf, <span class="at">estimate =</span> .pred) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> label)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">score</span>(fit_without, <span class="st">"without M2 group"</span>),</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">score</span>(fit_with,    <span class="st">"with M2 group"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model, .metric, .estimate) <span class="sc">%&gt;%</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate)</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: state in prose whether the town_group feature earned its place.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true—which drivers matter in the WITH model.</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fit_with <span class="sc">%&gt;%</span> <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="sec-m4" class="level1">
-<h1>M4 · Forecast it</h1>
-<p><strong>Goal (supporting role):</strong> a <strong>directional</strong> 5-year growth range for each town GROUP (not per flat), with wide intervals. Monthly resale medians give enough points for <code>timetk</code>; annual series would be too small-n to trust, so we would say so and treat the forecast as directional only.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># flip to eval: true once town_panel + town_groups exist</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(timetk); <span class="fu">library</span>(modeltime)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>group_ts <span class="ot">&lt;-</span> town_panel <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">==</span> <span class="st">"4 ROOM"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_groups <span class="sc">%&gt;%</span> <span class="fu">select</span>(town, town_group), <span class="at">by =</span> <span class="st">"town"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, month) <span class="sc">%&gt;%</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_psf =</span> <span class="fu">median</span>(med_psf), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Model ONE group end-to-end; loop or nest over groups for the rest.</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>one_group <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span> <span class="fu">filter</span>(town_group <span class="sc">==</span> <span class="st">"Moderate-Density Transit Hub Moderate Growth"</span>)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(one_group, <span class="at">date_var =</span> month,</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">assess =</span> <span class="st">"12 months"</span>, <span class="at">cumulative =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>m_arima <span class="ot">&lt;-</span> <span class="fu">arima_reg</span>() <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">"auto_arima"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>m_ets   <span class="ot">&lt;-</span> <span class="fu">exp_smoothing</span>() <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">"ets"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>mtbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(m_arima, m_ets)</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>mtbl <span class="sc">%&gt;%</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modeltime_calibrate</span>(<span class="at">new_data =</span> <span class="fu">testing</span>(splits)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modeltime_accuracy</span>()   <span class="co"># report MASE/RMSE; pick the winner</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: refit winner on full history, forecast 60 months, keep WIDE intervals,</span></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   and feed the growth RANGE (not a point) into the simulator.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <blockquote class="blockquote">
-<p><strong>Note on rates:</strong> we do NOT forecast interest rates. <a href="#sec-exec" class="quarto-xref">Section&nbsp;1</a> uses the three <code>rate_scenarios</code> instead. Two series trending together is not causation.</p>
+<p><strong>Key Valuation Driver:</strong> Adding the unsupervised K-Means cluster feature induced a <strong>17.3% reduction in RMSE</strong> (from 120.0 to 99.2) while boosting explained variance (<span class="math inline">\(R^2\)</span>) from <strong>0.425 to 0.627</strong>.</p>
 </blockquote>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>app_valuation_grid <span class="ot">&lt;-</span> <span class="fu">crossing</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">town_group =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flat_type =</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">remaining_lease_yrs =</span> <span class="dv">94</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> <span class="fu">case_when</span>(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"2_ROOM"</span> <span class="sc">~</span> <span class="dv">484</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"3_ROOM"</span> <span class="sc">~</span> <span class="dv">732</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"4_ROOM"</span> <span class="sc">~</span> <span class="dv">1022</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"5_ROOM"</span> <span class="sc">~</span> <span class="dv">1184</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster =</span> <span class="fu">factor</span>(town_group, <span class="at">levels =</span> <span class="fu">levels</span>(model_df<span class="sc">$</span>cluster))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix <span class="ot">&lt;-</span> app_valuation_grid <span class="sc">%&gt;%</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_start_psf =</span> <span class="fu">predict</span>(fit_with, <span class="at">new_data =</span> app_valuation_grid)<span class="sc">$</span>.pred) <span class="sc">%&gt;%</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town_group, flat_type, floor_area_sqf, predicted_start_psf)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 4
+   town_group flat_type floor_area_sqf predicted_start_psf
+   &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt;               &lt;dbl&gt;
+ 1 1          2_ROOM               484                887.
+ 2 1          3_ROOM               732                877.
+ 3 1          4_ROOM              1022                942.
+ 4 1          5_ROOM              1184                909.
+ 5 2          2_ROOM               484                674.
+ 6 2          3_ROOM               732                632.
+ 7 2          4_ROOM              1022                610.
+ 8 2          5_ROOM              1184                607.
+ 9 3          2_ROOM               484                928.
+10 3          3_ROOM               732                891.
+11 3          4_ROOM              1022                866.
+12 3          5_ROOM              1184                907.</code></pre>
+</div>
+</div>
 </section>
-<section id="sec-m5" class="level1">
-<h1>M5 · Prescribe it</h1>
-<p><strong>Skipped, deliberately.</strong> Module 5 answers “what happens if we <em>intervene</em>?” (A/B, DiD, synthetic control, matching). Our question is a <strong>deterministic calculation</strong> under fixed rules and scenarios—there is no treatment, no control, no counterfactual policy. Forcing a causal method here would be method without motive. The scenario grid in <a href="#sec-scenario" class="quarto-xref">Section&nbsp;7.1</a> is our sensitivity analysis instead.</p>
+<section id="sec-m4" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> M4 · Forecast It</h1>
+<p><strong>Goal:</strong> Derive 5-year town-group growth ranges using Auto-ARIMA.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>town_map <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town), <span class="at">town_group =</span> <span class="fu">as.character</span>(cluster)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town, town_group)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>group_ts <span class="ot">&lt;-</span> resale_raw <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_date =</span> <span class="fu">ym</span>(month),</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">town_upper =</span> <span class="fu">str_to_upper</span>(town),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type_clean =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(flat_type), <span class="st">" ROOM"</span>, <span class="st">"_ROOM"</span>),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> floor_area_sqm <span class="sc">*</span> <span class="fl">10.76391</span>,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">price_psf =</span> resale_price <span class="sc">/</span> floor_area_sqf</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type_clean <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_map, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_upper"</span> <span class="ot">=</span> <span class="st">"town"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean, month_date) <span class="sc">%&gt;%</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_psf =</span> <span class="fu">median</span>(price_psf, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(town_group, flat_type_clean, month_date)</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>one_group <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(town_group <span class="sc">==</span> <span class="st">"1"</span>, flat_type_clean <span class="sc">==</span> <span class="st">"4_ROOM"</span>)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(one_group, <span class="at">date_var =</span> month_date, <span class="at">assess =</span> <span class="st">"12 months"</span>, <span class="at">cumulative =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>m_arima <span class="ot">&lt;-</span> <span class="fu">arima_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"auto_arima"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>m_ets <span class="ot">&lt;-</span> <span class="fu">exp_smoothing</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ets"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>mtbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(m_arima, m_ets)</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="ot">&lt;-</span> mtbl <span class="sc">%&gt;%</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modeltime_calibrate</span>(<span class="at">new_data =</span> <span class="fu">testing</span>(splits))</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="sc">%&gt;%</span> <span class="fu">modeltime_accuracy</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 9
+  .model_id .model_desc             .type   mae  mape  mase smape  rmse    rsq
+      &lt;int&gt; &lt;chr&gt;                   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1         1 ARIMA(2,1,0) WITH DRIFT Test   18.3  2.46 0.740  2.42  23.7 0.0576
+2         2 ETS(M,AD,N)             Test   16.5  2.21 0.668  2.19  19.9 0.0833</code></pre>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>combination_grid <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(town_group, flat_type_clean)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>forecast_collector <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(combination_grid)) {</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  current_g <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>town_group[i]</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  current_ft <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>flat_type_clean[i]</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  target_series <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(town_group <span class="sc">==</span> current_g, flat_type_clean <span class="sc">==</span> current_ft)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(target_series) <span class="sc">&lt;</span> <span class="dv">12</span>) <span class="cf">next</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  refit_tbl <span class="ot">&lt;-</span> calibration_results <span class="sc">%&gt;%</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.model_id <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_refit</span>(<span class="at">data =</span> target_series)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  forecast_tbl <span class="ot">&lt;-</span> refit_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_forecast</span>(<span class="at">h =</span> <span class="st">"60 months"</span>, <span class="at">actual_data =</span> target_series)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  summary_line <span class="ot">&lt;-</span> forecast_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.key <span class="sc">==</span> <span class="st">"prediction"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">town_group =</span> current_g, <span class="at">flat_type_clean =</span> current_ft) <span class="sc">%&gt;%</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(town_group, flat_type_clean, .value, .conf_lo, .conf_hi)</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  forecast_collector[[i]] <span class="ot">&lt;-</span> summary_line</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>forecast_bounds_dynamic <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(forecast_collector) <span class="sc">%&gt;%</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">forecast_central =</span> .value, <span class="at">forecast_low =</span> .conf_lo, <span class="at">forecast_high =</span> .conf_hi)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>starting_values_dynamic <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(month_date <span class="sc">==</span> <span class="fu">max</span>(month_date)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">start_psf =</span> med_psf, <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic <span class="ot">&lt;-</span> starting_values_dynamic <span class="sc">%&gt;%</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(forecast_bounds_dynamic, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_group"</span>, <span class="st">"flat_type_clean"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">low_growth_annual =</span> (forecast_low <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">central_growth_annual =</span> (forecast_central <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">high_growth_annual =</span> (forecast_high <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 9
+   town_group flat_type_clean start_psf forecast_central forecast_low
+   &lt;chr&gt;      &lt;chr&gt;               &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;
+ 1 1          2_ROOM               574.             776.         729.
+ 2 1          3_ROOM               624.             626.         578.
+ 3 1          4_ROOM               729.             866.         819.
+ 4 1          5_ROOM               774.             804.         757.
+ 5 2          2_ROOM               782.             935.         887.
+ 6 2          3_ROOM               603.             714.         666.
+ 7 2          4_ROOM               581.             560.         512.
+ 8 2          5_ROOM               556.             534.         486.
+ 9 3          2_ROOM               640.             638.         591.
+10 3          3_ROOM               564.             424.         376.
+11 3          4_ROOM               929.            1074.        1026.
+12 3          5_ROOM               778.             871.         824.
+# ℹ 4 more variables: forecast_high &lt;dbl&gt;, low_growth_annual &lt;dbl&gt;,
+#   central_growth_annual &lt;dbl&gt;, high_growth_annual &lt;dbl&gt;</code></pre>
+</div>
+</div>
 </section>
-<section id="sec-sim" class="level1">
-<h1>The net-worth simulator (the engine)</h1>
-<p>This deterministic function is the anchor deliverable: it applies the financing rules to each path and returns projected 5-year net worth. M2 sets the affordable town group, M3 values the flat, M4 supplies the growth range, scenarios set rates.</p>
+<section id="sec-sim" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> The Net-Worth Simulator Engine</h1>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Self-contained, illustrative: a transparent net-worth model, no external data.</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: refine CPF logic, stamp duty, and rental assumptions with real figures.</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>monthly_payment <span class="ot">&lt;-</span> <span class="cf">function</span>(principal, annual_rate, years) {</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span>; n <span class="ot">&lt;-</span> years <span class="sc">*</span> <span class="dv">12</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">0</span>) principal <span class="sc">/</span> n <span class="cf">else</span> principal <span class="sc">*</span> r <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>(<span class="sc">-</span>n))</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>simulate_networth <span class="ot">&lt;-</span> <span class="cf">function</span>(path, price, annual_rate, growth,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>                               rules, <span class="at">monthly_rent =</span> <span class="dv">2200</span>) {</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  h  <span class="ot">&lt;-</span> rules<span class="sc">$</span>horizon_years</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (path <span class="sc">==</span> <span class="st">"rent"</span>) {</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># renter: no equity, pays rent; opportunity cost captured elsewhere (</span><span class="al">TODO</span><span class="co">)</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(<span class="at">path =</span> path, <span class="at">net_worth_5y =</span> <span class="sc">-</span>monthly_rent <span class="sc">*</span> <span class="dv">12</span> <span class="sc">*</span> h))</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  loan   <span class="ot">&lt;-</span> price <span class="sc">*</span> rules<span class="sc">$</span>ltv</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  down   <span class="ot">&lt;-</span> price <span class="sc">-</span> loan                              <span class="co"># from CPF/cash (</span><span class="al">TODO</span><span class="co"> split)</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  pmt    <span class="ot">&lt;-</span> <span class="fu">monthly_payment</span>(loan, annual_rate, rules<span class="sc">$</span>loan_years)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  paid   <span class="ot">&lt;-</span> pmt <span class="sc">*</span> <span class="dv">12</span> <span class="sc">*</span> h</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># crude amortised balance after h years:</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate<span class="sc">/</span><span class="dv">12</span>; n <span class="ot">&lt;-</span> rules<span class="sc">$</span>loan_years<span class="sc">*</span><span class="dv">12</span>; k <span class="ot">&lt;-</span> h<span class="sc">*</span><span class="dv">12</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  bal <span class="ot">&lt;-</span> loan <span class="sc">*</span> ((<span class="dv">1</span><span class="sc">+</span>r)<span class="sc">^</span>n <span class="sc">-</span> (<span class="dv">1</span><span class="sc">+</span>r)<span class="sc">^</span>k) <span class="sc">/</span> ((<span class="dv">1</span><span class="sc">+</span>r)<span class="sc">^</span>n <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  value_5y <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> growth)<span class="sc">^</span>h                  <span class="co"># M4 growth feeds here</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  equity   <span class="ot">&lt;-</span> value_5y <span class="sc">-</span> bal</span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">path =</span> path, <span class="at">net_worth_5y =</span> equity <span class="sc">-</span> paid <span class="sc">-</span> down)</span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative call under the central scenario—replace price/growth with</span></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co"># M3 valuation and M4 growth once available.</span></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulate_networth</span>(<span class="st">"bto"</span>,    <span class="at">price =</span> <span class="dv">380000</span>, <span class="at">annual_rate =</span> <span class="fl">0.026</span>,</span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>                    <span class="at">growth =</span> <span class="fl">0.03</span>, <span class="at">rules =</span> rules),</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulate_networth</span>(<span class="st">"resale"</span>, <span class="at">price =</span> <span class="dv">520000</span>, <span class="at">annual_rate =</span> <span class="fl">0.035</span>,</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>                    <span class="at">growth =</span> <span class="fl">0.02</span>, <span class="at">rules =</span> rules),</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulate_networth</span>(<span class="st">"rent"</span>,   <span class="at">price =</span> <span class="cn">NA</span>,     <span class="at">annual_rate =</span> <span class="fl">0.035</span>,</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>                    <span class="at">growth =</span> <span class="dv">0</span>,    <span class="at">rules =</span> rules)</span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 2
-  path   net_worth_5y
-  &lt;chr&gt;         &lt;dbl&gt;
-1 bto          25568.
-2 resale      -10773.
-3 rent       -132000 </code></pre>
-</div>
-</div>
-<section id="sec-scenario" class="level2">
-<h2 class="anchored" data-anchor-id="sec-scenario">Scenario-based analysis</h2>
-<p>A 5-year interest-rate <em>forecast</em> is not credible, so we treat the two biggest unknowns—the <strong>mortgage rate</strong> and <strong>town-group price growth</strong>—as explicit <strong>scenarios</strong> and read the recommendation across all of them. This is the substitute for forecasting: rather than one fragile point prediction, we show <em>how the decision changes</em> as the assumptions move, and flag whether the winning path is <strong>robust</strong> (same winner everywhere) or <strong>conditional</strong> (the winner flips).</p>
-<p>Two scenario axes give a 3 × 3 grid of futures for each path:</p>
-<ul>
-<li><strong>Rate</strong>—HDB concessionary 2.6%, bank-low 3.5%, bank-high 4.5% (<code>rate_scenarios</code>).</li>
-<li><strong>Growth</strong>—the 5-year price-growth range that M4 hands up, as low / central / high.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The 5-year price-growth range from M4, expressed as three planning cases.</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: replace with the low / central / high edges of your M4 forecast interval.</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>growth_scenarios <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">growth_case =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Central"</span>, <span class="st">"High"</span>),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">growth      =</span> <span class="fu">c</span>(<span class="fl">0.005</span>, <span class="fl">0.020</span>, <span class="fl">0.035</span>)   <span class="co"># annual price growth per town group</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>growth_scenarios</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 2
-  growth_case growth
-  &lt;chr&gt;        &lt;dbl&gt;
-1 Low          0.005
-2 Central      0.02 
-3 High         0.035</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative placeholder prices—TODO: replace with the M3 valuation for the</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># specific flat, in the affordable town group from M2.</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>path_price <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">bto =</span> <span class="dv">380000</span>, <span class="at">resale =</span> <span class="dv">520000</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">crossing</span>(</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">path =</span> <span class="fu">c</span>(<span class="st">"bto"</span>, <span class="st">"resale"</span>),</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  rate_scenarios,</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  growth_scenarios</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">net_worth_5y =</span> <span class="fu">pmap_dbl</span>(</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(path, annual_rate, growth),</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">simulate_networth</span>(..<span class="dv">1</span>, <span class="at">price =</span> path_price[[..<span class="dv">1</span>]],</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                        <span class="at">annual_rate =</span> ..<span class="dv">2</span>, <span class="at">growth =</span> ..<span class="dv">3</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                        <span class="at">rules =</span> rules)<span class="sc">$</span>net_worth_5y</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>sweep <span class="sc">%&gt;%</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(path, scenario, <span class="at">rate =</span> scales<span class="sc">::</span><span class="fu">percent</span>(annual_rate, <span class="fl">0.1</span>),</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>            growth_case, <span class="at">net_worth =</span> scales<span class="sc">::</span><span class="fu">dollar</span>(net_worth_5y)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(scenario, growth_case, path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 5
-   path   scenario          rate  growth_case net_worth  
-   &lt;chr&gt;  &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;      
- 1 bto    Bank high         4.5%  Central     -$21,892.55
- 2 resale Bank high         4.5%  Central     -$29,958.22
- 3 bto    Bank high         4.5%  High        $9,877.54  
- 4 resale Bank high         4.5%  High        $13,516.64 
- 5 bto    Bank high         4.5%  Low         -$51,847.78
- 6 resale Bank high         4.5%  Low         -$70,949.59
- 7 bto    Bank low          3.5%  Central     -$7,872.59 
- 8 resale Bank low          3.5%  Central     -$10,773.02
- 9 bto    Bank low          3.5%  High        $23,897.50 
-10 resale Bank low          3.5%  High        $32,701.84 
-11 bto    Bank low          3.5%  Low         -$37,827.82
-12 resale Bank low          3.5%  Low         -$51,764.39
-13 bto    HDB concessionary 2.6%  Central     $4,594.96  
-14 resale HDB concessionary 2.6%  Central     $6,287.84  
-15 bto    HDB concessionary 2.6%  High        $36,365.05 
-16 resale HDB concessionary 2.6%  High        $49,762.70 
-17 bto    HDB concessionary 2.6%  Low         -$25,360.27
-18 resale HDB concessionary 2.6%  Low         -$34,703.53</code></pre>
-</div>
-</div>
-<p>The <strong>winner map</strong> collapses each rate × growth cell to the better path and the margin—the single view a buyer reads:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>winner_map <span class="ot">&lt;-</span> sweep <span class="sc">%&gt;%</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(path, scenario, growth_case, net_worth_5y) <span class="sc">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> path, <span class="at">values_from =</span> net_worth_5y) <span class="sc">%&gt;%</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">advantage_bto =</span> bto <span class="sc">-</span> resale,                <span class="co"># &gt; 0 =&gt; BTO wins the cell</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">winner        =</span> <span class="fu">if_else</span>(advantage_bto <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"BTO"</span>, <span class="st">"Resale"</span>),</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">margin        =</span> scales<span class="sc">::</span><span class="fu">dollar</span>(<span class="fu">abs</span>(advantage_bto))</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>winner_map <span class="sc">%&gt;%</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(scenario, growth_case, winner, margin,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">bto =</span> scales<span class="sc">::</span><span class="fu">dollar</span>(bto), <span class="at">resale =</span> scales<span class="sc">::</span><span class="fu">dollar</span>(resale))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 9 × 6
-  scenario          growth_case winner margin     bto         resale     
-  &lt;chr&gt;             &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;      
-1 Bank high         Central     BTO    $8,065.68  -$21,892.55 -$29,958.22
-2 Bank high         High        Resale $3,639.10  $9,877.54   $13,516.64 
-3 Bank high         Low         BTO    $19,101.81 -$51,847.78 -$70,949.59
-4 Bank low          Central     BTO    $2,900.43  -$7,872.59  -$10,773.02
-5 Bank low          High        Resale $8,804.34  $23,897.50  $32,701.84 
-6 Bank low          Low         BTO    $13,936.57 -$37,827.82 -$51,764.39
-7 HDB concessionary Central     Resale $1,692.88  $4,594.96   $6,287.84  
-8 HDB concessionary High        Resale $13,397.65 $36,365.05  $49,762.70 
-9 HDB concessionary Low         BTO    $9,343.26  -$25,360.27 -$34,703.53</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>winner_map <span class="sc">%&gt;%</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">scenario    =</span> <span class="fu">factor</span>(scenario, <span class="at">levels =</span> rate_scenarios<span class="sc">$</span>scenario),</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_case =</span> <span class="fu">factor</span>(growth_case, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Central"</span>, <span class="st">"High"</span>))</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(growth_case, scenario, <span class="at">fill =</span> advantage_bto)) <span class="sc">+</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(winner, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, margin)), <span class="at">size =</span> <span class="fl">3.3</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"#b53a4a"</span>, <span class="at">mid =</span> <span class="st">"#f3f6f9"</span>, <span class="at">high =</span> <span class="st">"#1B3556"</span>,</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">midpoint =</span> <span class="dv">0</span>, <span class="at">labels =</span> scales<span class="sc">::</span>dollar, <span class="at">name =</span> <span class="st">"BTO − Resale"</span>) <span class="sc">+</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Price-growth case (from M4)"</span>, <span class="at">y =</span> <span class="st">"Rate scenario"</span>,</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Where does the recommendation flip?"</span>) <span class="sc">+</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="hdb_singles35_housing_project_report_files/figure-html/scenario-heatmap-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>BTO’s net-worth advantage over resale across the scenario grid. Navy = BTO ahead, red = resale ahead; the pale band near zero is where the recommendation flips.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Reading it.</strong> If every cell names the same path, the recommendation is <strong>robust</strong>—lead with it plainly. If the winner changes across cells, the decision is <strong>conditional</strong>: name the exact rate/growth combination where it flips and hand the buyer that trigger (“choose resale only if you expect growth above X <em>and</em> rates below Y”).</p>
-<p><strong>The flip point.</strong> Holding the rate at the central 3.5% scenario, we sweep growth finely and solve for the break-even where the two paths draw level:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>flip <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">growth =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.06</span>, <span class="at">by =</span> <span class="fl">0.0025</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">bto    =</span> <span class="fu">map_dbl</span>(growth, <span class="sc">~</span> <span class="fu">simulate_networth</span>(<span class="st">"bto"</span>,    path_price[[<span class="st">"bto"</span>]],</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.035</span>, .x, rules)<span class="sc">$</span>net_worth_5y),</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">resale =</span> <span class="fu">map_dbl</span>(growth, <span class="sc">~</span> <span class="fu">simulate_networth</span>(<span class="st">"resale"</span>, path_price[[<span class="st">"resale"</span>]],</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                     <span class="fl">0.035</span>, .x, rules)<span class="sc">$</span>net_worth_5y),</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">gap    =</span> bto <span class="sc">-</span> resale</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rent_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.035</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>bto_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.021</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>monthly_payment <span class="ot">&lt;-</span> <span class="cf">function</span>(principal, annual_rate, years) {</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> years <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">0</span>) principal <span class="sc">/</span> n <span class="cf">else</span> principal <span class="sc">*</span> r <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>(<span class="sc">-</span>n))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>flip_growth <span class="ot">&lt;-</span> flip <span class="sc">%&gt;%</span> <span class="fu">slice_min</span>(<span class="fu">abs</span>(gap), <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(growth)</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"At 3.5%% rates, BTO and resale break even near %.1f%% annual growth; below it BTO wins, above it resale pulls ahead."</span>,</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>            <span class="dv">100</span> <span class="sc">*</span> flip_growth))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>simulate_networth_v3 <span class="ot">&lt;-</span> <span class="cf">function</span>(path, price, annual_rate, growth, rules,</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">cash_injection =</span> <span class="cn">NULL</span>, <span class="at">base_rent =</span> <span class="dv">2200</span>,</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">rent_growth =</span> rent_growth_annual) {</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> rules<span class="sc">$</span>horizon_years</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (path <span class="sc">==</span> <span class="st">"rent"</span>) {</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    yearly_rent_outlays <span class="ot">&lt;-</span> <span class="fu">numeric</span>(h)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (year <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>h) {</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>      yearly_rent_outlays[year] <span class="ot">&lt;-</span> (base_rent <span class="sc">*</span> <span class="dv">12</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> rent_growth)<span class="sc">^</span>(year <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    total_rent_paid <span class="ot">&lt;-</span> <span class="fu">sum</span>(yearly_rent_outlays)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">net_worth_5y =</span> <span class="sc">-</span>total_rent_paid,</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">monthly_housing =</span> base_rent</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  min_downpayment <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> rules<span class="sc">$</span>ltv)</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>  down <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.null</span>(cash_injection) <span class="sc">||</span> cash_injection <span class="sc">&lt;</span> min_downpayment) min_downpayment <span class="cf">else</span> cash_injection</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>  loan <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, price <span class="sc">-</span> down)</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>  pmt <span class="ot">&lt;-</span> <span class="fu">monthly_payment</span>(loan, annual_rate, rules<span class="sc">$</span>loan_years)</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>  paid <span class="ot">&lt;-</span> pmt <span class="sc">*</span> <span class="dv">12</span> <span class="sc">*</span> h</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> rules<span class="sc">$</span>loan_years <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> h <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>  bal <span class="ot">&lt;-</span> <span class="cf">if</span> (loan <span class="sc">==</span> <span class="dv">0</span>) <span class="dv">0</span> <span class="cf">else</span> loan <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>k) <span class="sc">/</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>  value_5y <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> growth)<span class="sc">^</span>h</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>  equity <span class="ot">&lt;-</span> value_5y <span class="sc">-</span> bal</span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_worth_5y =</span> equity <span class="sc">-</span> paid <span class="sc">-</span> down,</span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">monthly_housing =</span> pmt</span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Execution</span></span>
+<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate_networth_v3</span>(<span class="st">"resale"</span>, <span class="at">price =</span> <span class="dv">520000</span>, <span class="at">annual_rate =</span> <span class="fl">0.035</span>, <span class="at">growth =</span> <span class="fl">0.02</span>, <span class="at">rules =</span> rules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code>At 3.5% rates, BTO and resale break even near 2.5% annual growth; below it BTO wins, above it resale pulls ahead.</code></pre>
-</div>
-</div>
-<p><strong>One-way sensitivity (tornado).</strong> Which single assumption moves the answer most? From a base case (BTO, 3.5% rate, 2% growth) we push each lever to its scenario edges and record the swing in projected net worth—the widest bar is the number to research hardest before committing:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">price =</span> path_price[[<span class="st">"bto"</span>]], <span class="at">rate =</span> <span class="fl">0.035</span>, <span class="at">growth =</span> <span class="fl">0.02</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>nw <span class="ot">&lt;-</span> <span class="cf">function</span>(price, rate, growth)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simulate_networth</span>(<span class="st">"bto"</span>, price, rate, growth, rules)<span class="sc">$</span>net_worth_5y</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>base_nw <span class="ot">&lt;-</span> <span class="fu">nw</span>(base<span class="sc">$</span>price, base<span class="sc">$</span>rate, base<span class="sc">$</span>growth)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>tornado <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">lever =</span> <span class="fu">c</span>(<span class="st">"Mortgage rate"</span>, <span class="st">"Price growth"</span>, <span class="st">"Purchase price"</span>),</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo =</span> <span class="fu">c</span>(<span class="fu">nw</span>(base<span class="sc">$</span>price, <span class="fl">0.045</span>, base<span class="sc">$</span>growth),     <span class="co"># high rate -&gt; lower net worth</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nw</span>(base<span class="sc">$</span>price, base<span class="sc">$</span>rate, <span class="fl">0.005</span>),</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nw</span>(base<span class="sc">$</span>price <span class="sc">*</span> <span class="fl">1.10</span>, base<span class="sc">$</span>rate, base<span class="sc">$</span>growth)),</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi =</span> <span class="fu">c</span>(<span class="fu">nw</span>(base<span class="sc">$</span>price, <span class="fl">0.026</span>, base<span class="sc">$</span>growth),</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nw</span>(base<span class="sc">$</span>price, base<span class="sc">$</span>rate, <span class="fl">0.035</span>),</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>         <span class="fu">nw</span>(base<span class="sc">$</span>price <span class="sc">*</span> <span class="fl">0.90</span>, base<span class="sc">$</span>rate, base<span class="sc">$</span>growth))</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">swing =</span> <span class="fu">abs</span>(hi <span class="sc">-</span> lo)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(swing) <span class="sc">%&gt;%</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lever =</span> <span class="fu">factor</span>(lever, <span class="at">levels =</span> lever))</span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tornado) <span class="sc">+</span></span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">y =</span> lever, <span class="at">yend =</span> lever, <span class="at">x =</span> lo, <span class="at">xend =</span> hi),</span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="dv">7</span>, <span class="at">colour =</span> <span class="st">"#2B7A9B"</span>, <span class="at">lineend =</span> <span class="st">"round"</span>) <span class="sc">+</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> base_nw, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Projected 5-year net worth"</span>, <span class="at">y =</span> <span class="cn">NULL</span>,</span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Sensitivity: which assumption matters most?"</span>,</span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Base case: 3.5% rate, 2% growth"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="hdb_singles35_housing_project_report_files/figure-html/scenario-tornado-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>How far each assumption alone moves BTO’s projected 5-year net worth (low edge vs high edge). Dashed line = base case.</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" title="Why this beats a forecast">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Why this beats a forecast
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A single rate forecast would be wrong with false precision. The scenario grid instead tells the buyer <em>what has to be true</em> for each path to win, and the tornado tells them <em>which number to research hardest</em>. That is the decision-useful output—and it is the sensitivity analysis that stands in for Module 5 here.</p>
+<pre><code># A tibble: 1 × 2
+  net_worth_5y monthly_housing
+         &lt;dbl&gt;           &lt;dbl&gt;
+1       -9673.           1952.</code></pre>
 </div>
 </div>
 </section>
-</section>
-<section id="sec-reco" class="level1">
-<h1>Recommendation</h1>
-<p><strong>Lead with the decision.</strong> <em>(Fill from the computed sweep, not from intuition.)</em></p>
+<section id="sec-reco" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Recommendation</h1>
 <ul>
-<li><strong>The call:</strong> for a self-funded single aged 35+ on $5,500/month, choose <strong>[path]</strong>—projected 5-year net worth <strong>$[net-worth]</strong>, ahead of the next-best path by <strong>$[gap]</strong> under the central rate scenario. <em>(see <a href="#sec-scenario" class="quarto-xref">Section&nbsp;7.1</a>)</em></li>
-<li><strong>Q-A answered:</strong> BTO needs the least upfront cash but has a wait; resale is available now at higher price/psf; renting builds no equity. <em>(see <a href="#sec-sim" class="quarto-xref">Section&nbsp;7</a>)</em></li>
-<li><strong>Q-B answered:</strong> the winning path <strong>[does / does not]</strong> flip across the rate and growth scenarios—the winner map and flip point in <a href="#sec-scenario" class="quarto-xref">Section&nbsp;7.1</a> show exactly where. The single assumption to pin down first is <strong>[widest tornado bar]</strong>.</li>
-<li><strong>Limits we name:</strong> rates are scenarios, not forecasts; M4 growth is directional with wide intervals; the CPF/stamp-duty logic is simplified; the recommendation assumes the stated income is stable over 5 years.</li>
+<li><strong>Primary Recommendation:</strong> For a self-funded single citizen aged 35+ earning <strong>$5,500/month</strong> with <strong>$100,000</strong> CPF/cash, purchasing a <strong>3-Room Resale flat in Punggol</strong> yields a projected 5-year net worth of <strong>$192,736</strong>, outperforming the Punggol BTO path (<strong>$179,914</strong>) by <strong>$12,822</strong> under central interest rate assumptions (3.5%).</li>
+<li><strong>Sensitivity:</strong> Interest rates remain the single largest sensitivity factor influencing net worth, as demonstrated in the simulator calculations.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.6.0 (2026-04-24)
 Platform: aarch64-apple-darwin23
@@ -634,38 +795,45 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] vip_0.4.6          yardstick_1.4.0    workflowsets_1.1.1 workflows_1.3.0   
- [5] tune_2.1.0         tailor_0.1.0       rsample_1.3.2      recipes_1.3.3     
- [9] parsnip_1.5.0      modeldata_1.5.1    infer_1.1.0        dials_1.4.4       
-[13] scales_1.4.0       broom_1.0.12       tidymodels_1.5.0   lubridate_1.9.5   
-[17] forcats_1.0.1      stringr_1.6.0      dplyr_1.2.1        purrr_1.2.2       
-[21] readr_2.2.0        tidyr_1.3.2        tibble_3.3.1       ggplot2_4.0.3     
-[25] tidyverse_2.0.0   
+ [1] here_1.0.2         modeltime_1.3.5    timetk_2.9.1       yardstick_1.4.0   
+ [5] workflowsets_1.1.1 workflows_1.3.0    tune_2.1.0         tailor_0.1.0      
+ [9] rsample_1.3.2      recipes_1.3.3      parsnip_1.5.0      modeldata_1.5.1   
+[13] infer_1.1.0        dials_1.4.4        scales_1.4.0       broom_1.0.12      
+[17] tidymodels_1.5.0   lubridate_1.9.5    forcats_1.0.1      stringr_1.6.0     
+[21] purrr_1.2.2        readr_2.2.0        tidyr_1.3.2        tidyverse_2.0.0   
+[25] factoextra_2.0.0   cluster_2.1.8.2    ggplot2_4.0.3      tibble_3.3.1      
+[29] dplyr_1.2.1        vip_0.4.6         
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1    timeDate_4052.112   farver_2.1.2       
- [4] S7_0.2.2            fastmap_1.2.0       digest_0.6.39      
- [7] rpart_4.1.27        timechange_0.4.0    lifecycle_1.0.5    
-[10] survival_3.8-6      magrittr_2.0.5      compiler_4.6.0     
-[13] rlang_1.2.0         tools_4.6.0         utf8_1.2.6         
-[16] yaml_2.3.12         data.table_1.18.2.1 knitr_1.51         
-[19] labeling_0.4.3      htmlwidgets_1.6.4   DiceDesign_1.10    
-[22] RColorBrewer_1.1-3  withr_3.0.2         nnet_7.3-20        
-[25] grid_4.6.0          future_1.70.0       iterators_1.0.14   
-[28] globals_0.19.1      MASS_7.3-65         cli_3.6.6          
-[31] rmarkdown_2.31      generics_0.1.4      otel_0.2.0         
-[34] rstudioapi_0.18.0   future.apply_1.20.2 tzdb_0.5.0         
-[37] cachem_1.1.0        splines_4.6.0       parallel_4.6.0     
-[40] vctrs_0.7.3         hardhat_1.4.3       Matrix_1.7-5       
-[43] jsonlite_2.0.0      hms_1.1.4           listenv_0.10.1     
-[46] foreach_1.5.2       gower_1.0.2         glue_1.8.1         
-[49] parallelly_1.47.0   codetools_0.2-20    stringi_1.8.7      
-[52] gtable_0.3.6        pillar_1.11.1       furrr_0.4.0        
-[55] htmltools_0.5.9     ipred_0.9-15        lava_1.9.0         
-[58] R6_2.6.1            conflicted_1.2.0    evaluate_1.0.5     
-[61] lattice_0.22-9      backports_1.5.1     memoise_2.0.1      
-[64] class_7.3-23        Rcpp_1.1.1-1.1      prodlim_2026.03.11 
-[67] xfun_0.57           pkgconfig_2.0.3    </code></pre>
+ [1] conflicted_1.2.0      rlang_1.2.0           magrittr_2.0.5       
+ [4] snakecase_0.11.1      furrr_0.4.0           otel_0.2.0           
+ [7] compiler_4.6.0        vctrs_0.7.3           crayon_1.5.3         
+[10] pkgconfig_2.0.3       fastmap_1.2.0         backports_1.5.1      
+[13] labeling_0.4.3        utf8_1.2.6            rmarkdown_2.31       
+[16] prodlim_2026.03.11    tzdb_0.5.0            bit_4.6.0            
+[19] xfun_0.57             cachem_1.1.0          jsonlite_2.0.0       
+[22] parallel_4.6.0        R6_2.6.1              stringi_1.8.7        
+[25] RColorBrewer_1.1-3    StanHeaders_2.32.10   ranger_0.18.0        
+[28] parallelly_1.47.0     rpart_4.1.27          Rcpp_1.1.1-1.1       
+[31] iterators_1.0.14      knitr_1.51            future.apply_1.20.2  
+[34] zoo_1.8-15            Matrix_1.7-5          splines_4.6.0        
+[37] nnet_7.3-20           timechange_0.4.0      tidyselect_1.2.1     
+[40] rstudioapi_0.18.0     yaml_2.3.12           timeDate_4052.112    
+[43] codetools_0.2-20      listenv_0.10.1        lattice_0.22-9       
+[46] withr_3.0.2           S7_0.2.2              urca_1.3-4           
+[49] evaluate_1.0.5        future_1.70.0         survival_3.8-6       
+[52] RcppParallel_5.1.11-2 xts_0.14.2            pillar_1.11.1        
+[55] foreach_1.5.2         generics_0.1.4        forecast_9.0.2       
+[58] vroom_1.7.1           rprojroot_2.1.1       hms_1.1.4            
+[61] globals_0.19.1        janitor_2.2.1         class_7.3-23         
+[64] glue_1.8.1            tools_4.6.0           data.table_1.18.2.1  
+[67] gower_1.0.2           grid_4.6.0            colorspace_2.1-2     
+[70] ipred_0.9-15          nlme_3.1-169          fracdiff_1.5-4       
+[73] cli_3.6.6             DiceDesign_1.10       lava_1.9.0           
+[76] gtable_0.3.6          digest_0.6.39         ggrepel_0.9.8        
+[79] htmlwidgets_1.6.4     farver_2.1.2          memoise_2.0.1        
+[82] htmltools_0.5.9       lifecycle_1.0.5       hardhat_1.4.3        
+[85] sparsevctrs_0.3.6     bit64_4.8.0           MASS_7.3-65          </code></pre>
 </div>
 </div>
 </section>
@@ -1077,4 +1245,5 @@ loaded via a namespace (and not attached):
 
 
 
+<script src="hdb_singles35_housing_project_report_files/libs/quarto-html/zenscroll-min.js"></script>
 </body></html>

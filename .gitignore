@@ -1,10 +1,13 @@
-# History and session files
+## History and session files
 .Rhistory
 .RData
 .Rproj.user/
 
-# Large raw datasets (Keep repo lightweight)
-*.csv
+# Generated/intermediate files (regenerable by re-running the script — not source data)
+resale.csv
+
+# Auto-rendered duplicate of README.md — don't track, regenerate if needed
+README.html
 
 # Deployment secrets & local configs
 .RdsData
@@ -13,5 +16,5 @@ rsconnect/
 # Ignore temporary knitted/rendered assets if needed
 .quarto/
 
-# Ignore large raw dataset dumps if they exceed GitHub limits (>50MB)
-# data/spatial/*.shp
+# macOS
+.DS_Store

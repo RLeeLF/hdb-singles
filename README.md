@@ -29,9 +29,22 @@ This project delivers an integrated data pipeline, machine learning valuation mo
 ├── hdb_singles35_housing_project_report.html  # Standalone rendered HTML report
 ├── app.R                                      # Interactive R Shiny application code
 └── data/                                      # Data directory
-    ├── Resaleflatprices...2017onwards.csv    # Data.gov.sg HDB resale transactions
-    ├── 
-    └── README.md                              # Data dictionary & data download notes
+    ├──ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv   # Data.gov.sg HDB resale transactions
+    ├── CDAR_capstone_feature_master_table_v3.RData
+    ├──singapore_shopping_malls_coordinates.csv
+    ├──PriceRangeofHDBFlatsOffered.csv
+    ├──RentingOutofFlatsfromJan2021.csv
+    ├──ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv
+└── spatial
+    ├──feature_master_table_v3.csv
+    ├──singapore_malls.geojson
+    ├── Parks.geojson
+    ├── NEAMarketandFoodCentre.geojson
+    ├── LTAMRTStationExitGEOJSON.geojson
+    ├── PreSchoolsLocation.geojson
+    ├── HawkerCentresGEOJSON.geojson
+└── MasterPlan2019PlanningAreaBoundaryNoSea.geojson
+└── README.md                              # Data dictionary & data download notes
     
 
 
