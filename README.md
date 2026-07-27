@@ -59,7 +59,8 @@ install.packages(c(
   "stringr",
   "tidymodels",
   "timetk",
-  "modeltime"
+  "modeltime",
+  "tidysynth",
 ))
 
 # vip is installed from r-universe (not a standard CRAN install):
