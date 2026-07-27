@@ -78,8 +78,8 @@ ui <- fluidPage(
     img(src = "hdbimage.jpg", class = "hero-banner")
   ),
   
-  titlePanel("For Singles : HDB Housing Strategy Calculator"),
-  p("Empirical wealth forecasting and cash flow feasibility mapping across multiple housing configurations."),
+  titlePanel("For Singles Age 35 : HDB Housing Strategy Calculator"),
+  p("Empirical 5-year forecasting and cash flow feasibility mapping across multiple housing configurations."),
   hr(),
   
   sidebarLayout(
@@ -91,7 +91,10 @@ ui <- fluidPage(
         inputId = "selected_towns",
         label   = "Select Target Towns (Choose one or multiple):",
         choices = c("ANG MO KIO", "BEDOK", "BISHAN", "BUKIT MERAH", "CLEMENTI", 
-                    "PUNGGOL", "SENGKANG", "WOODLANDS"), 
+                    "PUNGGOL", "SENGKANG", "WOODLANDS","TAMPINES","YISHUN",
+                    "HOUGANG","JURONG EAST","TOA PAYOH","CHOA CHU KANG",
+                    "BUKIT BATOK","SEMBAWANG","JURONG WEST","KALLANG/WHAMPOA",
+                    "MARINE PARADE","PASIR RIS","GEYLANG","BUKIT PANJANG"), 
         selected = "PUNGGOL",
         multiple = TRUE,
         options  = list(placeholder = 'Select towns...')
