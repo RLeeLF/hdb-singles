@@ -1,4 +1,4 @@
-# HDB Housing Decision Engine for Singles 35+
+# HDB Housing Decision Engine for Singles 35
 > **CDAR 2026 Capstone Project Report**
 > **Authors:** Ivy Poon · Lee Lai Forng · Tan Lee Yen
 > **Live Web Application:** [mysghousing.com](https://mysghousing.com)
@@ -40,7 +40,7 @@ All data files needed to run the project are already included in `data/` — no 
 
 ## 🛠️ Setup & Reproducing the Report
 
-**Requirements:** R (version RStudio 2026.07.1+147)
+**Requirements:** R (version X.X+)
 
 Install the required packages before running anything:
 
@@ -59,8 +59,7 @@ install.packages(c(
   "stringr",
   "tidymodels",
   "timetk",
-  "modeltime",
-  "tidysynth",
+  "modeltime"
 ))
 
 # vip is installed from r-universe (not a standard CRAN install):
@@ -86,11 +85,14 @@ shiny::runApp("app.R")
 
 ## 🧠 Methodology (brief)
 
-1. **Data cleaning & feature engineering:** raw HDB resale, rental, and BTO transactions (data.gov.sg) are cleaned and standardised into price-per-square-foot panels by town, flat type, and year.
-2. **Town clustering:** k-means clustering groups Singapore's towns into structural segments (e.g. "High-Density Affordable Growth," "Low-Density Premium Lower Growth") based on price level, 5-year growth, volatility, and infrastructure features (MRT exits, malls, hawker centres, population density).
-3. **Valuation model:** a random forest model predicts price-per-square-foot from flat type, remaining lease, floor area, and town cluster. Including the cluster label as a predictor reduced RMSE and improved R² over a model without it (see code comments in `HDB_capstone_v2.R` for the exact figures).
-4. **Time-series forecasting:** ARIMA and ETS models forecast 5-year price trajectories for each town-group × flat-type combination, selecting the better-performing model by held-out MAE.
-5. **Decision engine:** the Shiny app (`app.R`) combines these outputs with user inputs (savings, interest rate scenario, flat type, town) to simulate 5-year net worth under BTO, Resale, and Rent pathways, accounting for TDSR/MSR/LTV constraints and CPF usage rules.
+1. **Spatial feature compilation:** `data/spatial/capstone_districtmaster_v2.R` (run from the project root) processes Singapore's planning-area boundaries (URA Master Plan 2019) together with Census 2020 household data and point-location datasets (MRT exits, preschools, hawker centres, NEA markets, malls) to compute town-level HDB density and infrastructure counts. Output: `data/spatial/feature_master_table_v3.csv` / `.RData`.
+2. **Data cleaning & feature engineering:** raw HDB resale, rental, and BTO transactions (data.gov.sg) are cleaned and standardised into price-per-square-foot panels by town, flat type, and year.
+3. **Town clustering:** k-means clustering groups Singapore's towns into structural segments (e.g. "High-Density Affordable Growth," "Low-Density Premium Lower Growth") based on price level, 5-year growth, volatility, and the infrastructure features from step 1.
+4. **Valuation model:** a random forest model predicts price-per-square-foot from flat type, remaining lease, floor area, and town cluster. Including the cluster label as a predictor reduced RMSE and improved R² over a model without it (see code comments in `HDB_capstone_v2.R` for the exact figures).
+5. **Time-series forecasting:** ARIMA and ETS models forecast 5-year price trajectories for each town-group × flat-type combination, selecting the better-performing model by held-out MAE.
+6. **Decision engine:** the Shiny app (`app.R`) combines these outputs with user inputs (savings, interest rate scenario, flat type, town) to simulate 5-year net worth under BTO, Resale, and Rent pathways, accounting for TDSR/MSR/LTV constraints and CPF usage rules.
+
+> **Script execution order:** `data/spatial/capstone_districtmaster_v2.R` must be run first (it generates `data/spatial/feature_master_table_v3.csv`, which `HDB_capstone_v2.R` reads as an input). Run it from the project root — open `hdb_calculator.Rproj` first, same as the other scripts — not by setting the working directory to the script's own folder.
 
 ---
 
@@ -119,7 +121,9 @@ hdb_calculator/                                          # repo root — open th
     ├── singapore_shopping_malls_coordinates.csv
     │
     └── spatial/                                          # Spatial / geojson data (nested inside data/)
-        ├── feature_master_table_v3.csv
+        ├── capstone_districtmaster_v2.R                  # Compiles feature_master_table_v3 from geojson + Census data (run this BEFORE HDB_capstone_v2.R)
+        ├── feature_master_table_v3.csv                    # Output: town-level infrastructure & density features
+        ├── feature_master_table_v3.RData                  # Saved workspace from capstone_districtmaster_v2.R
         ├── singapore_malls.geojson
         ├── Parks.geojson
         ├── NEAMarketandFoodCentre.geojson
@@ -136,10 +140,10 @@ hdb_calculator/                                          # repo root — open th
 * HDB Resale Flat Prices — [data.gov.sg](https://data.gov.sg)
 * HDB Renting Out of Flats — [data.gov.sg](https://data.gov.sg)
 * Price Range of HDB Flats Offered (BTO) — [data.gov.sg](https://data.gov.sg)
-* Resident Households by Planning Area & Dwelling Type, Census of Population 2020 — [SingStat](https://www.singstat.gov.sg) (used to compute `HDB_Density_per_SQKM`, saved in `HDB_capstone_v2.RData`)
+* Resident Households by Planning Area & Dwelling Type, Census of Population 2020 — [SingStat](https://www.singstat.gov.sg) (used to compute `HDB_Density_per_SQKM`, via `data/spatial/capstone_districtmaster_v2.R`, saved in `feature_master_table_v3.RData`)
 * Master Plan 2019 Planning Area Boundary — URA
 * MRT Station Exits — LTA DataMall
-* Parks, hawker centres, preschools, malls - [data.gov.sg](https://data.gov.sg)
+* *(add remaining sources: parks, hawker centres, preschools, malls)*
 
 All datasets above are included in this repo under `data/`. See `data/README.md` for full data dictionary and column-level notes.
 
