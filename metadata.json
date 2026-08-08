@@ -1,0 +1,6 @@
+{
+  "name": "Singapore HDB Housing Strategy Calculator (Singles Age 35+)",
+  "description": "Empirical 5-year forecasting, wealth projection, cash flow feasibility mapping, grant eligibility checking, and AI-powered strategy advice for singles age 35+ buying HDB BTO, Resale, or Renting in Singapore.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

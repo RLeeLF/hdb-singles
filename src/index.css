@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #fcfaf7;
+    color: #1a1a1a;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+/* Custom scrollbar matching editorial aesthetic */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f0e9;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+}
