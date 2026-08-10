@@ -4,7 +4,7 @@ library(dplyr)
 library(tidyr)
 library(readr)
 
-# Load the Base District Map (Master Plan 2019)
+# Load the Base District Map (Master Plan 2019) if there is a new update we need to change here
 districts_raw <- st_read("data/spatial/MasterPlan2019PlanningAreaBoundaryNoSea.geojson") %>% 
   st_make_valid() %>% 
   st_transform(3414)
@@ -18,8 +18,8 @@ districts_base <- districts_raw %>%
 # -------------------------------------------------------------------------
 # Process HDB CSV Data & Calculate Density
 # -------------------------------------------------------------------------
-# no setwd() needed
-csv_path <- "data/ResidentHouseholdsbyPlanningAreaofResidenceandTypeofDwellingCensusofPopulation2020.csv"
+
+csv_path <- "data/spatial/ResidentHouseholdsbyPlanningAreaofResidenceandTypeofDwellingCensusofPopulation2020.csv"
 
 # Load demographic table, cleaning up row names to match spatial map keys (uppercase)
 hdb_data_raw <- read_csv(csv_path)
@@ -46,15 +46,19 @@ hdb_density_df <- districts_base %>%
   select(PLN_AREA_N, HDB_Total, HDB_Density_per_SQKM)
 
 # -------------------------------------------------------------------------
-# Process POINT Datasets (Aggregate by Count)
+# Process POINT Datasets (Aggregate by Count and has an inspectable audit trail
 # -------------------------------------------------------------------------
-process_points <- function(file_path, col_name) {
+process_points <- function(file_path, col_name, return_detail = FALSE) {
   pts <- st_read(file_path, quiet = TRUE) %>% 
     st_make_valid() %>% 
     st_transform(3414)
   
-  st_join(pts, districts_raw, join = st_intersects) %>%
-    st_drop_geometry() %>%
+  joined <- st_join(pts, districts_raw, join = st_intersects) %>%
+    st_drop_geometry()
+  
+  if (return_detail) return(joined)
+  
+  joined %>%
     filter(!is.na(PLN_AREA_N)) %>%
     group_by(PLN_AREA_N) %>%
     summarise(!!col_name := n(), .groups = "drop")
@@ -65,8 +69,7 @@ preschool_counts  <- process_points("data/spatial/PreSchoolsLocation.geojson", "
 mrt_exit_counts   <- process_points("data/spatial/LTAMRTStationExitGEOJSON.geojson", "MRT_Exit_Count")
 hawker_counts     <- process_points("data/spatial/HawkerCentresGEOJSON.geojson", "Hawker_Centre_Count")
 nea_market_counts <- process_points("data/spatial/NEAMarketandFoodCentre.geojson", "NEA_Market_Count")
-shopping_mall_counts <- process_points("data/spatial/singapore_malls.geojson", "Shopping_Mall_Count")
-
+shopping_mall_counts <- process_points("data/spatial/singapore_malls_v2.geojson", "Shopping_Mall_Count")
 
 # -------------------------------------------------------------------------
 # Compile the Final Re-ordered Master Data Table
@@ -83,6 +86,24 @@ feature_master_table_v3 <- districts_base %>%
   left_join(shopping_mall_counts,  by = "PLN_AREA_N") %>%
   # Fill infrastructure factors that are missing in specific districts with 0
   mutate(across(everything(), ~replace_na(., 0)))
+
+# checking after updating shopping malls
+
+sum(feature_master_table_v3$Shopping_Mall_Count) # count if 157
+
+feature_master_table_v3 %>%
+  filter(PLN_AREA_N %in% c("BISHAN", "TOA PAYOH", "BUKIT TIMAH")) %>%
+  select(PLN_AREA_N, Shopping_Mall_Count) #check those 3 towns that were missing malls
+
+feature_master_table_v3 %>%
+  filter(Shopping_Mall_Count == 0) %>%
+  pull(PLN_AREA_N) # sanity check areas without any malls
+
+malls_detail <- process_points("data/spatial/singapore_malls_v2.geojson",
+                               "Shopping_Mall_Count", return_detail = TRUE)
+write_csv(malls_detail, "data/spatial/malls_joined_audit.csv")
+
+View(malls_detail)
 
 # View the structural array ordered by District
 print(head(feature_master_table_v3))

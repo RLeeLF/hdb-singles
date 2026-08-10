@@ -48,14 +48,28 @@ set.seed(2026)
 
 # Executive Summary {#sec-exec}
 
-For a self-funded single citizen aged 35 with **$100,000** available CPF/cash, the path that maximises projected 5-year net worth is a **3-Room resale flat in Punggol** (~**$192,736**) versus **$179,914** for the next-best alternative (Punggol BTO) under central interest rates (**~3.5%**) and central price growth. This report combines three HDB transaction datasets and 2019 Master Plan geo-spatial accessibility data into a multi-stage analytical framework (Modules 1–4) culminating in an interactive decision engine.
+**Decision :** For a self-funded single aged 35+ earning *\$5,500/month*, with **$100,000** avaliable CPF/cash, the path that maximises projected *5-year net worth* under baseline interest rate scenario (~3.5%) is a **3-Room resale flat in Punggol** (~**$192,736**) versus **$179,914** for the next-best alternative (Punggol BTO) under central interest rates (**~3.5%**) and central price growth.
 
+This report takes three HDB transaction dataset and 2019 Master Plan geo-spatial accessibility, URA, data.gov data into a multi-stage analytical framework through SMU CDAR Modules 1–4 and ends in an interactive decision engine. The engine underneath is a **deterministic net-worth simulator**: given salary, age, retirement horizon and a rate scenario, it applies Singapore's financing rules (TDSR 55%, MSR 30%, LTV 75%, CPF for downpayment, lease decay) to compare BTO, resale and rent. Modules 2–4 supply the inputs the simulator needs: which **town group** you can afford (M2), a **price/psf model** to value a specific flat-type in a town (M3), and a **directional 5-year growth range** per town group (M4).
+
+**Two questions this answers**
+
+- **Q-A (descriptive):** how do BTO, resale and rent compare *today* on upfront cash, monthly burden under the loan limits, and the town groups each opens up?
+- **Q-B (prescriptive):** which path maximises projected **5-year net worth** under transparent rate scenarios and town-group growth ranges—and how sensitive is that to the assumptions?
+
+**What we deliberately do NOT do:** we do not forecast 5-year interest rates (not credibly possible); we treat rates as **2–3 scenarios**. We do not run a causal Module 5—the question is a calculation, not an intervention (see @sec-m5).
+
+**Potential Users who can benefit from our solution:**
+Singapore PR or Singaporeans approaching age 35 and above, of all marital status can benefit from our solution to make a more informed decision to decide which flat-type and town to choose their HDB purchase. Since BTO is a purely by chance outcome, they can use the solution to calculate rental vs resale options.
+  
 ```{r assumptions, eval=TRUE}
-# Global housing rules & interest rate scenarios
+# Singapore housing rules & interest rate scenarios
 rules <- list(
   horizon_years = 5,
   ltv = 0.75,        # Maximum 75% Loan-to-Value limit
-  loan_years = 25
+  loan_years = 25,
+  msr    = 0.3,
+  tdsr  = 0.55
 )
 
 rate_scenarios <- tibble(
@@ -210,6 +224,24 @@ resale_town_panel %>%
 
 **Goal:** Segment towns into 3 interpretable investor clusters using price levels, price growth, price volatility, and spatial GeoJSON features.
 
+```{r m2-cluster-evaluation, eval=TRUE, fig.height=4.5, fig.width=9}
+# Load factoextra for cluster evaluation visualisations
+#library(factoextra)
+#library(patchwork)
+
+# 1. Elbow Method (Total Within-Cluster Sum of Squares)
+#p_elbow <- fviz_nbclust(clust_matrix, kmeans, method = "wss", k.max = 8) +
+ # labs(title = "Elbow Method", x = "Number of Clusters (k)", y = "Total Within SS")
+
+# 2. Average Silhouette Method
+# p_sil <- fviz_nbclust(clust_matrix, kmeans, method = "silhouette", k.max = 8) +
+ # labs(title = "Silhouette Analysis", x = "Number of Clusters (k)", y = "Average Silhouette Width")
+
+# Display plots side-by-side
+#p_elbow + p_sil
+```
+**Why 3:** Empirically, the average silhouette width peaks at $k = 2$ (width ~0.212). However, $k=2$ simply splits Singapore into an overly binary market ('Mature/Central' vs. 'Non-Mature/Peripheral'). Selecting $k = 3$ retains virtually identical cluster separation (silhouette width ~0.210) while providing the granularity needed to capture the distinct 'Moderate-Density Transit Town' archetype. 
+
 ```{r m2-features, eval=TRUE}
 resale_town_features <- resale_town_panel %>%
   filter(flat_type %in% c("2_ROOM","3_ROOM","4_ROOM","5_ROOM")) %>%
@@ -264,6 +296,8 @@ town_groups <- cluster_rec %>%
 
 town_groups %>% count(cluster)
 ```
+
+
 
 # M3 · Predict It {#sec-m3}
 
