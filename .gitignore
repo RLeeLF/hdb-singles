@@ -1,20 +1,42 @@
-## History and session files
+# ---- Credentials — never commit ----
+.Renviron
+.Renviron.local
+
+# ---- R session/workspace files ----
 .Rhistory
-.RData
 .Rproj.user/
+.RData
+HDB_capstone_v3.RData
+*.RData
 
-# Generated/intermediate files (regenerable by re-running the script — not source data)
-resale.csv
+# ---- renv (if/when Part 0.5's renv.lock work happens — lockfile itself
+# SHOULD be committed, only the local library cache should not) ----
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
+renv/staging/
 
-# Auto-rendered duplicate of README.md — don't track, regenerate if needed
-README.html
+# ---- OS/editor cruft ----
+.DS_Store
+Thumbs.db
+*.swp
 
-# Deployment secrets & local configs
-.RdsData
+# ---- Large raw data files (commit only if genuinely needed for
+# reproducibility per Part 0.5 — otherwise document the source/download
+# steps instead of tracking multi-MB CSVs in git) ----
+# Uncomment if these should stay out of version control:
+# data/*.csv
+# data/spatial/*.geojson
+# data/spatial/*.csv
+
+# ---- Generated outputs that are rebuilt by the pipeline, not hand-edited ----
+# Keep model_outputs/ committed per Part 5.1 (it's the deliverable artefact),
+# but exclude anything clearly regenerable/scratch:
+*.tmp
+*.logresale.csv
 rsconnect/
 
-# Ignore temporary knitted/rendered assets if needed
-.quarto/
-
-# macOS
-.DS_Store
+resale.csv

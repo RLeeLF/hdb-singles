@@ -242,6 +242,10 @@ glimpse(town_feature_master)
 resale_town_features <- resale_town_features %>%
   mutate(town = str_to_upper(town))
 
+### remove Centra area and Whampos
+resale_town_features <- resale_town_features %>%
+  filter(!town %in% c("CENTRAL AREA", "KALLANG/WHAMPOA"))
+
 ### here's the master join
 cluster_rec <- resale_town_features %>%
   left_join(town_feature_master, by = c("town" = "PLN_AREA_N")) %>%
@@ -249,6 +253,13 @@ cluster_rec <- resale_town_features %>%
 
 glimpse(cluster_rec)
 ###skim(cluster_rec)
+
+###cluster_rec %>% slice(8) %>% select(town). found Whampoa and Central Area
+
+# and check for any towns that failed to match at all
+#resale_town_features %>%
+#  anti_join(town_feature_master, by = c("town" = "PLN_AREA_N")) %>%
+#  distinct(town)
 
 ### Let's try to cluster----
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Team—Ivy · Lai Forng · Lee Yen">
-<meta name="dcterms.date" content="2026-07-28">
+<meta name="dcterms.date" content="2026-08-08">
 
 <title>HDB Options for Singles 35+: A Net-Worth Decision Engine</title>
 <style>
@@ -153,7 +153,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 28, 2026</p>
+      <p class="date">August 8, 2026</p>
     </div>
   </div>
   
@@ -392,60 +392,80 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_panel <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>,<span class="st">"3_ROOM"</span>,<span class="st">"4_ROOM"</span>,<span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type) <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf =</span> <span class="fu">median</span>(med_psf),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y =</span> <span class="fu">last</span>(med_psf) <span class="sc">/</span> <span class="fu">first</span>(med_psf) <span class="sc">-</span> <span class="dv">1</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatility =</span> <span class="fu">sd</span>(med_psf),</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> flat_type,</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(level_psf, growth_5y, volatility),</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_glue =</span> <span class="st">"{.value}_{flat_type}"</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_2_ROOM), <span class="fu">median</span>(level_psf_2_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_2_ROOM),</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_3_ROOM), <span class="fu">median</span>(level_psf_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_3_ROOM),</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_4_ROOM), <span class="fu">median</span>(level_psf_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_4_ROOM),</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_5_ROOM), <span class="fu">median</span>(level_psf_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_5_ROOM),</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_2_ROOM), <span class="dv">0</span>, growth_5y_2_ROOM),</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_3_ROOM), <span class="fu">median</span>(growth_5y_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_3_ROOM),</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_4_ROOM), <span class="fu">median</span>(growth_5y_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_4_ROOM),</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_5_ROOM), <span class="fu">median</span>(growth_5y_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_5_ROOM),</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">contains</span>(<span class="st">"volatility"</span>), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .))</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>cluster_rec <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_feature_master, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town"</span> <span class="ot">=</span> <span class="st">"PLN_AREA_N"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load factoextra for cluster evaluation visualisations</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(factoextra)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#library(patchwork)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Elbow Method (Total Within-Cluster Sum of Squares)</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#p_elbow &lt;- fviz_nbclust(clust_matrix, kmeans, method = "wss", k.max = 8) +</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a> <span class="co"># labs(title = "Elbow Method", x = "Number of Clusters (k)", y = "Total Within SS")</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Average Silhouette Method</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># p_sil &lt;- fviz_nbclust(clust_matrix, kmeans, method = "silhouette", k.max = 8) +</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a> <span class="co"># labs(title = "Silhouette Analysis", x = "Number of Clusters (k)", y = "Average Silhouette Width")</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plots side-by-side</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#p_elbow + p_sil</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p><strong>Why 3:</strong> Empirically, the average silhouette width peaks at <span class="math inline">\(k = 2\)</span> (width ~0.212). However, <span class="math inline">\(k=2\)</span> simply splits Singapore into an overly binary market (‘Mature/Central’ vs.&nbsp;‘Non-Mature/Peripheral’). Selecting <span class="math inline">\(k = 3\)</span> retains virtually identical cluster separation (silhouette width ~0.210) while providing the granularity needed to capture the distinct ‘Moderate-Density Transit Town’ archetype.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_panel <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>,<span class="st">"3_ROOM"</span>,<span class="st">"4_ROOM"</span>,<span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town, flat_type) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf =</span> <span class="fu">median</span>(med_psf),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y =</span> <span class="fu">last</span>(med_psf) <span class="sc">/</span> <span class="fu">first</span>(med_psf) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">volatility =</span> <span class="fu">sd</span>(med_psf),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> flat_type,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> <span class="fu">c</span>(level_psf, growth_5y, volatility),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_glue =</span> <span class="st">"{.value}_{flat_type}"</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_2_ROOM), <span class="fu">median</span>(level_psf_2_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_2_ROOM),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_3_ROOM), <span class="fu">median</span>(level_psf_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_3_ROOM),</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_4_ROOM), <span class="fu">median</span>(level_psf_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_4_ROOM),</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">level_psf_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_psf_5_ROOM), <span class="fu">median</span>(level_psf_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), level_psf_5_ROOM),</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_2_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_2_ROOM), <span class="dv">0</span>, growth_5y_2_ROOM),</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_3_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_3_ROOM), <span class="fu">median</span>(growth_5y_3_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_3_ROOM),</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_4_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_4_ROOM), <span class="fu">median</span>(growth_5y_4_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_4_ROOM),</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">growth_5y_5_ROOM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(growth_5y_5_ROOM), <span class="fu">median</span>(growth_5y_5_ROOM, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), growth_5y_5_ROOM),</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">contains</span>(<span class="st">"volatility"</span>), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .))</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>resale_town_features <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>cluster_rec <span class="ot">&lt;-</span> resale_town_features <span class="sc">%&gt;%</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_feature_master, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town"</span> <span class="ot">=</span> <span class="st">"PLN_AREA_N"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="dv">0</span>, .)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>clust_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> ., <span class="at">data =</span> cluster_rec) <span class="sc">%&gt;%</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(town, <span class="at">new_role =</span> <span class="st">"id"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>clust_prepped <span class="ot">&lt;-</span> <span class="fu">prep</span>(clust_rec) <span class="sc">%&gt;%</span> <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>clust_matrix <span class="ot">&lt;-</span> clust_prepped <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(clust_matrix, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>town_groups <span class="ot">&lt;-</span> cluster_rec <span class="sc">%&gt;%</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(km<span class="sc">$</span>cluster))</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>town_groups <span class="sc">%&gt;%</span> <span class="fu">count</span>(cluster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>clust_rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(<span class="sc">~</span> ., <span class="at">data =</span> cluster_rec) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(town, <span class="at">new_role =</span> <span class="st">"id"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_numeric_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>clust_prepped <span class="ot">&lt;-</span> <span class="fu">prep</span>(clust_rec) <span class="sc">%&gt;%</span> <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>clust_matrix <span class="ot">&lt;-</span> clust_prepped <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(clust_matrix, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">25</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>town_groups <span class="ot">&lt;-</span> cluster_rec <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(km<span class="sc">$</span>cluster))</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>town_groups <span class="sc">%&gt;%</span> <span class="fu">count</span>(cluster)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 2
@@ -463,50 +483,50 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>resale_clean_upper <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>town_groups_upper <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>resale_labelled <span class="ot">&lt;-</span> resale_clean_upper <span class="sc">%&gt;%</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_groups_upper <span class="sc">%&gt;%</span> <span class="fu">select</span>(town, cluster), <span class="at">by =</span> <span class="st">"town"</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>model_df <span class="ot">&lt;-</span> resale_labelled <span class="sc">%&gt;%</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(price_psf, remaining_lease_yrs, cluster) <span class="sc">%&gt;%</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(flat_type, cluster), as.factor))</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(model_df, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> price_psf)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>rec_without <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>rec_with <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf <span class="sc">+</span> cluster, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">300</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"permutation"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>wf_without <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_without) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>wf_with <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_with) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>fit_without <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_without, <span class="at">data =</span> train)</span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>fit_with <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_with, <span class="at">data =</span> train)</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>metric_set_reg <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse, rsq, mae)</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_obj, label) {</span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(fit_obj, <span class="at">new_data =</span> test) <span class="sc">%&gt;%</span></span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">metric_set_reg</span>(<span class="at">truth =</span> price_psf, <span class="at">estimate =</span> .pred) <span class="sc">%&gt;%</span></span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> label)</span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">score</span>(fit_without, <span class="st">"without M2 group"</span>), <span class="fu">score</span>(fit_with, <span class="st">"with M2 group"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model, .metric, .estimate) <span class="sc">%&gt;%</span></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>resale_clean_upper <span class="ot">&lt;-</span> resale <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>town_groups_upper <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>resale_labelled <span class="ot">&lt;-</span> resale_clean_upper <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_groups_upper <span class="sc">%&gt;%</span> <span class="fu">select</span>(town, cluster), <span class="at">by =</span> <span class="st">"town"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>model_df <span class="ot">&lt;-</span> resale_labelled <span class="sc">%&gt;%</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(price_psf, remaining_lease_yrs, cluster) <span class="sc">%&gt;%</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(flat_type, cluster), as.factor))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(model_df, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> price_psf)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>rec_without <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>rec_with <span class="ot">&lt;-</span> <span class="fu">recipe</span>(price_psf <span class="sc">~</span> flat_type <span class="sc">+</span> remaining_lease_yrs <span class="sc">+</span> floor_area_sqf <span class="sc">+</span> cluster, <span class="at">data =</span> train) <span class="sc">%&gt;%</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_nominal_predictors</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_zv</span>(<span class="fu">all_predictors</span>())</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">300</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"permutation"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>wf_without <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_without) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>wf_with <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> <span class="fu">add_recipe</span>(rec_with) <span class="sc">%&gt;%</span> <span class="fu">add_model</span>(rf_spec)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>fit_without <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_without, <span class="at">data =</span> train)</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>fit_with <span class="ot">&lt;-</span> <span class="fu">fit</span>(wf_with, <span class="at">data =</span> train)</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>metric_set_reg <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse, rsq, mae)</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="cf">function</span>(fit_obj, label) {</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">augment</span>(fit_obj, <span class="at">new_data =</span> test) <span class="sc">%&gt;%</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">metric_set_reg</span>(<span class="at">truth =</span> price_psf, <span class="at">estimate =</span> .pred) <span class="sc">%&gt;%</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model =</span> label)</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">score</span>(fit_without, <span class="st">"without M2 group"</span>), <span class="fu">score</span>(fit_with, <span class="st">"with M2 group"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(model, .metric, .estimate) <span class="sc">%&gt;%</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> .metric, <span class="at">values_from =</span> .estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
@@ -519,9 +539,9 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_with <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fit_with <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>(<span class="at">num_features =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -538,26 +558,26 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>app_valuation_grid <span class="ot">&lt;-</span> <span class="fu">crossing</span>(</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">town_group =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>),</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flat_type =</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>),</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">remaining_lease_yrs =</span> <span class="dv">94</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> <span class="fu">case_when</span>(</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"2_ROOM"</span> <span class="sc">~</span> <span class="dv">484</span>,</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"3_ROOM"</span> <span class="sc">~</span> <span class="dv">732</span>,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"4_ROOM"</span> <span class="sc">~</span> <span class="dv">1022</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"5_ROOM"</span> <span class="sc">~</span> <span class="dv">1184</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster =</span> <span class="fu">factor</span>(town_group, <span class="at">levels =</span> <span class="fu">levels</span>(model_df<span class="sc">$</span>cluster))</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix <span class="ot">&lt;-</span> app_valuation_grid <span class="sc">%&gt;%</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_start_psf =</span> <span class="fu">predict</span>(fit_with, <span class="at">new_data =</span> app_valuation_grid)<span class="sc">$</span>.pred) <span class="sc">%&gt;%</span></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town_group, flat_type, floor_area_sqf, predicted_start_psf)</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>app_valuation_grid <span class="ot">&lt;-</span> <span class="fu">crossing</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">town_group =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">flat_type =</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">remaining_lease_yrs =</span> <span class="dv">94</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"2_ROOM"</span> <span class="sc">~</span> <span class="dv">484</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"3_ROOM"</span> <span class="sc">~</span> <span class="dv">732</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"4_ROOM"</span> <span class="sc">~</span> <span class="dv">1022</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>      flat_type <span class="sc">==</span> <span class="st">"5_ROOM"</span> <span class="sc">~</span> <span class="dv">1184</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster =</span> <span class="fu">factor</span>(town_group, <span class="at">levels =</span> <span class="fu">levels</span>(model_df<span class="sc">$</span>cluster))</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix <span class="ot">&lt;-</span> app_valuation_grid <span class="sc">%&gt;%</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_start_psf =</span> <span class="fu">predict</span>(fit_with, <span class="at">new_data =</span> app_valuation_grid)<span class="sc">$</span>.pred) <span class="sc">%&gt;%</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town_group, flat_type, floor_area_sqf, predicted_start_psf)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>empirical_start_matrix</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12 × 4
@@ -584,43 +604,43 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>town_map <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town), <span class="at">town_group =</span> <span class="fu">as.character</span>(cluster)) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town, town_group)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>group_ts <span class="ot">&lt;-</span> resale_raw <span class="sc">%&gt;%</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_date =</span> <span class="fu">ym</span>(month),</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">town_upper =</span> <span class="fu">str_to_upper</span>(town),</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type_clean =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(flat_type), <span class="st">" ROOM"</span>, <span class="st">"_ROOM"</span>),</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> floor_area_sqm <span class="sc">*</span> <span class="fl">10.76391</span>,</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">price_psf =</span> resale_price <span class="sc">/</span> floor_area_sqf</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type_clean <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_map, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_upper"</span> <span class="ot">=</span> <span class="st">"town"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean, month_date) <span class="sc">%&gt;%</span></span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_psf =</span> <span class="fu">median</span>(price_psf, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(town_group, flat_type_clean, month_date)</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>one_group <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(town_group <span class="sc">==</span> <span class="st">"1"</span>, flat_type_clean <span class="sc">==</span> <span class="st">"4_ROOM"</span>)</span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(one_group, <span class="at">date_var =</span> month_date, <span class="at">assess =</span> <span class="st">"12 months"</span>, <span class="at">cumulative =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>m_arima <span class="ot">&lt;-</span> <span class="fu">arima_reg</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"auto_arima"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>m_ets <span class="ot">&lt;-</span> <span class="fu">exp_smoothing</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ets"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>mtbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(m_arima, m_ets)</span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="ot">&lt;-</span> mtbl <span class="sc">%&gt;%</span></span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modeltime_calibrate</span>(<span class="at">new_data =</span> <span class="fu">testing</span>(splits))</span>
-<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="sc">%&gt;%</span> <span class="fu">modeltime_accuracy</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>town_map <span class="ot">&lt;-</span> town_groups <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">town =</span> <span class="fu">str_to_upper</span>(town), <span class="at">town_group =</span> <span class="fu">as.character</span>(cluster)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(town, town_group)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>group_ts <span class="ot">&lt;-</span> resale_raw <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_date =</span> <span class="fu">ym</span>(month),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">town_upper =</span> <span class="fu">str_to_upper</span>(town),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">flat_type_clean =</span> <span class="fu">str_replace</span>(<span class="fu">str_to_upper</span>(flat_type), <span class="st">" ROOM"</span>, <span class="st">"_ROOM"</span>),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">floor_area_sqf =</span> floor_area_sqm <span class="sc">*</span> <span class="fl">10.76391</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">price_psf =</span> resale_price <span class="sc">/</span> floor_area_sqf</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flat_type_clean <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2_ROOM"</span>, <span class="st">"3_ROOM"</span>, <span class="st">"4_ROOM"</span>, <span class="st">"5_ROOM"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(town_map, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_upper"</span> <span class="ot">=</span> <span class="st">"town"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean, month_date) <span class="sc">%&gt;%</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_psf =</span> <span class="fu">median</span>(price_psf, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(town_group, flat_type_clean, month_date)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>one_group <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(town_group <span class="sc">==</span> <span class="st">"1"</span>, flat_type_clean <span class="sc">==</span> <span class="st">"4_ROOM"</span>)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>splits <span class="ot">&lt;-</span> <span class="fu">time_series_split</span>(one_group, <span class="at">date_var =</span> month_date, <span class="at">assess =</span> <span class="st">"12 months"</span>, <span class="at">cumulative =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>m_arima <span class="ot">&lt;-</span> <span class="fu">arima_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"auto_arima"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>m_ets <span class="ot">&lt;-</span> <span class="fu">exp_smoothing</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ets"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(med_psf <span class="sc">~</span> month_date, <span class="at">data =</span> <span class="fu">training</span>(splits))</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>mtbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(m_arima, m_ets)</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="ot">&lt;-</span> mtbl <span class="sc">%&gt;%</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">modeltime_calibrate</span>(<span class="at">new_data =</span> <span class="fu">testing</span>(splits))</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>calibration_results <span class="sc">%&gt;%</span> <span class="fu">modeltime_accuracy</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 9
@@ -633,54 +653,54 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>combination_grid <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(town_group, flat_type_clean)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>forecast_collector <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(combination_grid)) {</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  current_g <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>town_group[i]</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  current_ft <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>flat_type_clean[i]</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  target_series <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(town_group <span class="sc">==</span> current_g, flat_type_clean <span class="sc">==</span> current_ft)</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(target_series) <span class="sc">&lt;</span> <span class="dv">12</span>) <span class="cf">next</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  refit_tbl <span class="ot">&lt;-</span> calibration_results <span class="sc">%&gt;%</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.model_id <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_refit</span>(<span class="at">data =</span> target_series)</span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  forecast_tbl <span class="ot">&lt;-</span> refit_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_forecast</span>(<span class="at">h =</span> <span class="st">"60 months"</span>, <span class="at">actual_data =</span> target_series)</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  summary_line <span class="ot">&lt;-</span> forecast_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.key <span class="sc">==</span> <span class="st">"prediction"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">town_group =</span> current_g, <span class="at">flat_type_clean =</span> current_ft) <span class="sc">%&gt;%</span></span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(town_group, flat_type_clean, .value, .conf_lo, .conf_hi)</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  forecast_collector[[i]] <span class="ot">&lt;-</span> summary_line</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>forecast_bounds_dynamic <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(forecast_collector) <span class="sc">%&gt;%</span></span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">forecast_central =</span> .value, <span class="at">forecast_low =</span> .conf_lo, <span class="at">forecast_high =</span> .conf_hi)</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>starting_values_dynamic <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(month_date <span class="sc">==</span> <span class="fu">max</span>(month_date)) <span class="sc">%&gt;%</span></span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">start_psf =</span> med_psf, <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic <span class="ot">&lt;-</span> starting_values_dynamic <span class="sc">%&gt;%</span></span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(forecast_bounds_dynamic, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_group"</span>, <span class="st">"flat_type_clean"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">low_growth_annual =</span> (forecast_low <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">central_growth_annual =</span> (forecast_central <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">high_growth_annual =</span> (forecast_high <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>combination_grid <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(town_group, flat_type_clean)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>forecast_collector <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(combination_grid)) {</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  current_g <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>town_group[i]</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  current_ft <span class="ot">&lt;-</span> combination_grid<span class="sc">$</span>flat_type_clean[i]</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  target_series <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(town_group <span class="sc">==</span> current_g, flat_type_clean <span class="sc">==</span> current_ft)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(target_series) <span class="sc">&lt;</span> <span class="dv">12</span>) <span class="cf">next</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  refit_tbl <span class="ot">&lt;-</span> calibration_results <span class="sc">%&gt;%</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.model_id <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_refit</span>(<span class="at">data =</span> target_series)</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  forecast_tbl <span class="ot">&lt;-</span> refit_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">modeltime_forecast</span>(<span class="at">h =</span> <span class="st">"60 months"</span>, <span class="at">actual_data =</span> target_series)</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  summary_line <span class="ot">&lt;-</span> forecast_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.key <span class="sc">==</span> <span class="st">"prediction"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">town_group =</span> current_g, <span class="at">flat_type_clean =</span> current_ft) <span class="sc">%&gt;%</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(town_group, flat_type_clean, .value, .conf_lo, .conf_hi)</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>  forecast_collector[[i]] <span class="ot">&lt;-</span> summary_line</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>forecast_bounds_dynamic <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(forecast_collector) <span class="sc">%&gt;%</span></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">forecast_central =</span> .value, <span class="at">forecast_low =</span> .conf_lo, <span class="at">forecast_high =</span> .conf_hi)</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>starting_values_dynamic <span class="ot">&lt;-</span> group_ts <span class="sc">%&gt;%</span></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(town_group, flat_type_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(month_date <span class="sc">==</span> <span class="fu">max</span>(month_date)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">start_psf =</span> med_psf, <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic <span class="ot">&lt;-</span> starting_values_dynamic <span class="sc">%&gt;%</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(forecast_bounds_dynamic, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"town_group"</span>, <span class="st">"flat_type_clean"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">low_growth_annual =</span> (forecast_low <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">central_growth_annual =</span> (forecast_central <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">high_growth_annual =</span> (forecast_high <span class="sc">/</span> start_psf)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>growth_matrix_dynamic</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 12 × 9
@@ -708,54 +728,54 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rent_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.035</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>bto_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.021</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>monthly_payment <span class="ot">&lt;-</span> <span class="cf">function</span>(principal, annual_rate, years) {</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> years <span class="sc">*</span> <span class="dv">12</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">0</span>) principal <span class="sc">/</span> n <span class="cf">else</span> principal <span class="sc">*</span> r <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>(<span class="sc">-</span>n))</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>simulate_networth_v3 <span class="ot">&lt;-</span> <span class="cf">function</span>(path, price, annual_rate, growth, rules,</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">cash_injection =</span> <span class="cn">NULL</span>, <span class="at">base_rent =</span> <span class="dv">2200</span>,</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">rent_growth =</span> rent_growth_annual) {</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> rules<span class="sc">$</span>horizon_years</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (path <span class="sc">==</span> <span class="st">"rent"</span>) {</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    yearly_rent_outlays <span class="ot">&lt;-</span> <span class="fu">numeric</span>(h)</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (year <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>h) {</span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>      yearly_rent_outlays[year] <span class="ot">&lt;-</span> (base_rent <span class="sc">*</span> <span class="dv">12</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> rent_growth)<span class="sc">^</span>(year <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    total_rent_paid <span class="ot">&lt;-</span> <span class="fu">sum</span>(yearly_rent_outlays)</span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">net_worth_5y =</span> <span class="sc">-</span>total_rent_paid,</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">monthly_housing =</span> base_rent</span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  min_downpayment <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> rules<span class="sc">$</span>ltv)</span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>  down <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.null</span>(cash_injection) <span class="sc">||</span> cash_injection <span class="sc">&lt;</span> min_downpayment) min_downpayment <span class="cf">else</span> cash_injection</span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>  loan <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, price <span class="sc">-</span> down)</span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>  pmt <span class="ot">&lt;-</span> <span class="fu">monthly_payment</span>(loan, annual_rate, rules<span class="sc">$</span>loan_years)</span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>  paid <span class="ot">&lt;-</span> pmt <span class="sc">*</span> <span class="dv">12</span> <span class="sc">*</span> h</span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> rules<span class="sc">$</span>loan_years <span class="sc">*</span> <span class="dv">12</span></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> h <span class="sc">*</span> <span class="dv">12</span></span>
-<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>  bal <span class="ot">&lt;-</span> <span class="cf">if</span> (loan <span class="sc">==</span> <span class="dv">0</span>) <span class="dv">0</span> <span class="cf">else</span> loan <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>k) <span class="sc">/</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>  value_5y <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> growth)<span class="sc">^</span>h</span>
-<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>  equity <span class="ot">&lt;-</span> value_5y <span class="sc">-</span> bal</span>
-<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
-<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_worth_5y =</span> equity <span class="sc">-</span> paid <span class="sc">-</span> down,</span>
-<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">monthly_housing =</span> pmt</span>
-<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Execution</span></span>
-<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate_networth_v3</span>(<span class="st">"resale"</span>, <span class="at">price =</span> <span class="dv">520000</span>, <span class="at">annual_rate =</span> <span class="fl">0.035</span>, <span class="at">growth =</span> <span class="fl">0.02</span>, <span class="at">rules =</span> rules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>rent_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.035</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>bto_growth_annual <span class="ot">&lt;-</span> <span class="fl">0.021</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>monthly_payment <span class="ot">&lt;-</span> <span class="cf">function</span>(principal, annual_rate, years) {</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> years <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (r <span class="sc">==</span> <span class="dv">0</span>) principal <span class="sc">/</span> n <span class="cf">else</span> principal <span class="sc">*</span> r <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>(<span class="sc">-</span>n))</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>simulate_networth_v3 <span class="ot">&lt;-</span> <span class="cf">function</span>(path, price, annual_rate, growth, rules,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">cash_injection =</span> <span class="cn">NULL</span>, <span class="at">base_rent =</span> <span class="dv">2200</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">rent_growth =</span> rent_growth_annual) {</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> rules<span class="sc">$</span>horizon_years</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (path <span class="sc">==</span> <span class="st">"rent"</span>) {</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    yearly_rent_outlays <span class="ot">&lt;-</span> <span class="fu">numeric</span>(h)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (year <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>h) {</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>      yearly_rent_outlays[year] <span class="ot">&lt;-</span> (base_rent <span class="sc">*</span> <span class="dv">12</span>) <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> rent_growth)<span class="sc">^</span>(year <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    total_rent_paid <span class="ot">&lt;-</span> <span class="fu">sum</span>(yearly_rent_outlays)</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">net_worth_5y =</span> <span class="sc">-</span>total_rent_paid,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">monthly_housing =</span> base_rent</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  min_downpayment <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> rules<span class="sc">$</span>ltv)</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  down <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">is.null</span>(cash_injection) <span class="sc">||</span> cash_injection <span class="sc">&lt;</span> min_downpayment) min_downpayment <span class="cf">else</span> cash_injection</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>  loan <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, price <span class="sc">-</span> down)</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>  pmt <span class="ot">&lt;-</span> <span class="fu">monthly_payment</span>(loan, annual_rate, rules<span class="sc">$</span>loan_years)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  paid <span class="ot">&lt;-</span> pmt <span class="sc">*</span> <span class="dv">12</span> <span class="sc">*</span> h</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> annual_rate <span class="sc">/</span> <span class="dv">12</span></span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> rules<span class="sc">$</span>loan_years <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> h <span class="sc">*</span> <span class="dv">12</span></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  bal <span class="ot">&lt;-</span> <span class="cf">if</span> (loan <span class="sc">==</span> <span class="dv">0</span>) <span class="dv">0</span> <span class="cf">else</span> loan <span class="sc">*</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> (<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>k) <span class="sc">/</span> ((<span class="dv">1</span> <span class="sc">+</span> r)<span class="sc">^</span>n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>  value_5y <span class="ot">&lt;-</span> price <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> growth)<span class="sc">^</span>h</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>  equity <span class="ot">&lt;-</span> value_5y <span class="sc">-</span> bal</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">tibble</span>(</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_worth_5y =</span> equity <span class="sc">-</span> paid <span class="sc">-</span> down,</span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">monthly_housing =</span> pmt</span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Execution</span></span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a><span class="fu">simulate_networth_v3</span>(<span class="st">"resale"</span>, <span class="at">price =</span> <span class="dv">520000</span>, <span class="at">annual_rate =</span> <span class="fl">0.035</span>, <span class="at">growth =</span> <span class="fl">0.02</span>, <span class="at">rules =</span> rules)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 2
@@ -774,7 +794,7 @@ $ max_selling_price &lt;dbl&gt; 107000, 106000, 95000, 114000, 103000, 104000, 9
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.6.0 (2026-04-24)
