@@ -92,9 +92,9 @@ export function computeEquity(
   const r = annualRate / 12;
   const n = loanYears * 12;
   const k = horizonYears * 12;
-  const balance5y = loan === 0
-    ? 0
-    : (loan * (Math.pow(1 + r, n) - Math.pow(1 + r, k))) / (Math.pow(1 + r, n) - 1);
+  const balance5y = loan === 0 || k >= n
+  ? 0
+  : (loan * (Math.pow(1 + r, n) - Math.pow(1 + r, k))) / (Math.pow(1 + r, n) - 1);
 
   const value5y = price * Math.pow(1 + growth, horizonYears);
   const equity5y = value5y - balance5y;

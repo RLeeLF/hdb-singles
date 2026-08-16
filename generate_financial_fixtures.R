@@ -49,9 +49,9 @@ test_cases <- bind_rows(representative, corners) %>%
     balance_5y = eq$balance_5y,
     value_5y   = eq$value_5y,
     equity_5y  = eq$equity_5y,
-    msr        = list(check_msr_tdsr(gross_income, existing_debt,
-                                     price - max(price * 0.25, cash_injection),
-                                     loan_years, annual_rate)),
+    msr = list(check_msr_tdsr(gross_income, existing_debt,
+                              eq$loan,
+                              loan_years, annual_rate)),
     stressed_instalment = msr$stressed_instalment,
     regulatory_fail      = msr$regulatory_fail
   ) %>%
