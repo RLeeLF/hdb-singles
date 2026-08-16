@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #005fa6;
+    --primary-hover: #004d88;
+    --surface: #f8f9fb;
+    --surface-container: #ffffff;
+    --on-surface: #1a1c1e;
+    --outline: #d8dadc;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--on-surface);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom styled range slider matching Stitch handoff */
+input[type="range"].custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  height: 6px;
+  outline: none;
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #005fa6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 95, 166, 0.35);
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #004d88;
+}
+
+input[type="range"].custom-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #005fa6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 95, 166, 0.35);
+}
+

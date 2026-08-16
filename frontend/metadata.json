@@ -1,0 +1,7 @@
+{
+  "name": "HDB Options Calculator for Singles in Singapore",
+  "description": "Empirical 5-year forecasting, cash flow feasibility mapping, and MAS MSR/TDSR loan eligibility calculator for single citizens in Singapore.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

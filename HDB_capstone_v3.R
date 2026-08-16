@@ -721,7 +721,11 @@ LOW_SUPPORT_THRESHOLD <- 20
 empirical_start_matrix <- empirical_start_matrix %>%
   mutate(low_confidence = n_train_support < LOW_SUPPORT_THRESHOLD)
 
-# Save the artefact — this is what app.R's lease-aware lookup (Part 3) will read
+# NOTE: this CSV is diagnostic output only (shows the pre-artefact lease
+# grid with n_train_support/low_confidence visible for Part 2 documentation).
+# It is NOT read back by anything downstream — Part 5.1 consumes
+# empirical_start_matrix as an in-memory object, and app.R reads only
+# model_outputs/housing_projection_matrix.csv. Safe to regenerate or delete.
 write_csv(empirical_start_matrix, "data/empirical_start_matrix_lease.csv")
 
 empirical_start_matrix %>% filter(low_confidence) %>% arrange(n_train_support)
