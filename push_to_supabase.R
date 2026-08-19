@@ -40,6 +40,34 @@ con <- dbConnect(
 
 dbWriteTable(con, "housing_projection_matrix", housing_projection_matrix, overwrite = TRUE)
 
+# overwrite=TRUE drops and recreates the table, which resets RLS and any
+# policies to nothing every time this runs — re-apply both here so a
+# re-push can never silently leave the table wide open again.
+dbExecute(con, "ALTER TABLE housing_projection_matrix ENABLE ROW LEVEL SECURITY")
+
+dbExecute(con, "DROP POLICY IF EXISTS \"Allow public read access\" ON housing_projection_matrix")
+dbExecute(con, "
+  CREATE POLICY \"Allow public read access\"
+  ON housing_projection_matrix
+  FOR SELECT
+  TO anon
+  USING (true)
+")
+
+
+rls_status <- dbGetQuery(con, "
+  SELECT c.relrowsecurity
+  FROM pg_class c
+  JOIN pg_namespace n ON c.relnamespace = n.oid
+  WHERE c.relname = 'housing_projection_matrix' AND n.nspname = 'public'
+")
+
+if (nrow(rls_status) != 1) {
+  stop("Expected exactly 1 match for housing_projection_matrix in public schema, got ", nrow(rls_status))
+}
+stopifnot(isTRUE(rls_status$relrowsecurity))
+message("RLS confirmed enabled.")
+
 # Confirm the round trip — row count should match exactly (1200 + 12 = 1212)
 remote_n <- dbGetQuery(con, "SELECT COUNT(*) AS n FROM housing_projection_matrix")$n
 stopifnot(remote_n == nrow(housing_projection_matrix))
