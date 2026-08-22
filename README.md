@@ -19,21 +19,19 @@ Supabase-backed web app — to quantitatively evaluate whether purchasing
 a **Build-To-Order (BTO)**, buying a **Resale flat**, or **Renting**
 maximises projected 5-year net worth.
 
-**This is a resubmission.** The prior version's central gap, per
-review, was that the report did not sufficiently document the work
-already performed — not that the work was missing. This version
-restructures the report to source the actual pipeline scripts directly
+**This is a resubmission.** This detailed re-submission
+structures the report to source the actual pipeline scripts directly
 (rather than duplicate their logic inline) and states every result
 alongside the check that validated it, organized around the same
 narrative as the pipeline itself — data cleaning, boundary crosswalk,
 clustering, valuation, forecasting, lease flexibility, MSR/TDSR, and the
 live deployment — rather than a generic template. See
 `hdb_singles35_housing_project_report.qmd` for the full account,
-including several real bugs found and fixed during this resubmission
-(a town-boundary join gap, a `kmeans()` cluster-numbering bug that
-reached the live database, an unenforced MSR/TDSR requirement, and a
-missing edge-case guard in the deployed financial arithmetic — each
-documented with how it was caught).
+including several real bugs found, previously ignored(due to time constraint) 
+spatial bugs and fixed during this resubmission (a town-boundary join gap, 
+a `kmeans()` cluster-numbering bug that reached the live database, an 
+unenforced MSR/TDSR requirement, and a missing edge-case guard in the deployed 
+financial arithmetic — each documented with how it was caught and fixed).
 
 ---
 

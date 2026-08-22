@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({ isLoading, isError }) => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base sm:text-xl font-bold tracking-tight text-[#005fa6] font-heading">
-                HDB Options Calculator for Singles
+                BTO, Rent, Resale HDB Housing Choice Calculator for Singles
               </h1>
               <span className="hidden md:inline-flex text-[10px] font-bold uppercase tracking-widest bg-blue-50 text-[#005fa6] px-2 py-0.5 rounded border border-blue-200">
                 Age 35+ Scheme
